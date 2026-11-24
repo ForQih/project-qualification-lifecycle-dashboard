@@ -1,0 +1,3065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project &amp; Qualification Lifecycle Dashboard</title>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --bg-page: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-surface-subtle: #F8FAFC;
+      --bg-surface-muted: #F1F5F9;
+      --bg-input: #F8FAFC;
+      --border-default: #E2E8F0;
+      --border-subtle: #F1F5F9;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --text-faint: #94A3B8;
+      --scrollbar-track: #F1F5F9;
+      --scrollbar-thumb: #CBD5E1;
+      --scrollbar-thumb-hover: #94A3B8;
+      --card-parallel-bg: rgba(248, 250, 252, 0.7);
+      --card-selected-bg: #EFF6FF;
+      --card-pred-bg: #FFFBEB;
+      --card-succ-bg: #ECFDF5;
+      --card-highlight-bg: #EEF2FF;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0B1120;
+      --bg-surface: #111827;
+      --bg-surface-subtle: #0F172A;
+      --bg-surface-muted: #1E293B;
+      --bg-input: #1E293B;
+      --border-default: #1F2937;
+      --border-subtle: #1E293B;
+      --text-primary: #F8FAFC;
+      --text-secondary: #E2E8F0;
+      --text-muted: #94A3B8;
+      --text-faint: #64748B;
+      --scrollbar-track: #0F172A;
+      --scrollbar-thumb: #334155;
+      --scrollbar-thumb-hover: #475569;
+      --card-parallel-bg: rgba(30, 41, 59, 0.55);
+      --card-selected-bg: rgba(37, 99, 235, 0.22);
+      --card-pred-bg: rgba(217, 119, 6, 0.18);
+      --card-succ-bg: rgba(5, 150, 105, 0.18);
+      --card-highlight-bg: rgba(99, 102, 241, 0.22);
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* Dark Mode Surface, Border & Typography Overrides */
+    [data-theme="dark"] .bg-white,
+    [data-theme="dark"] .bg-white\/90 {
+      background-color: var(--bg-surface) !important;
+    }
+    [data-theme="dark"] .bg-slate-50,
+    [data-theme="dark"] .bg-slate-50\/80,
+    [data-theme="dark"] .bg-slate-50\/90,
+    [data-theme="dark"] .bg-slate-50\/70,
+    [data-theme="dark"] .bg-slate-50\/60 {
+      background-color: var(--bg-surface-subtle) !important;
+    }
+    [data-theme="dark"] .bg-slate-100,
+    [data-theme="dark"] .bg-slate-200\/60,
+    [data-theme="dark"] .bg-slate-200\/80 {
+      background-color: var(--bg-surface-muted) !important;
+    }
+    [data-theme="dark"] .border-slate-200,
+    [data-theme="dark"] .border-slate-300,
+    [data-theme="dark"] .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+      border-color: var(--border-default) !important;
+    }
+    [data-theme="dark"] .border-slate-100 {
+      border-color: var(--border-subtle) !important;
+    }
+    [data-theme="dark"] .text-slate-900,
+    [data-theme="dark"] .text-slate-800 {
+      color: var(--text-primary) !important;
+    }
+    [data-theme="dark"] .text-slate-700,
+    [data-theme="dark"] .text-slate-600 {
+      color: var(--text-secondary) !important;
+    }
+    [data-theme="dark"] .text-slate-500 {
+      color: var(--text-muted) !important;
+    }
+    [data-theme="dark"] .text-slate-400 {
+      color: var(--text-faint) !important;
+    }
+    [data-theme="dark"] .hover\:bg-slate-50:hover,
+    [data-theme="dark"] .hover\:bg-slate-50\/40:hover {
+      background-color: rgba(30, 41, 59, 0.7) !important;
+    }
+    [data-theme="dark"] input[type="text"] {
+      background-color: var(--bg-input) !important;
+      color: var(--text-primary) !important;
+    }
+    [data-theme="dark"] input[type="text"]::placeholder {
+      color: var(--text-faint);
+    }
+    [data-theme="dark"] .bg-blue-50,
+    [data-theme="dark"] .bg-blue-50\/50 {
+      background-color: rgba(37, 99, 235, 0.16) !important;
+      border-color: rgba(59, 130, 246, 0.35) !important;
+    }
+    [data-theme="dark"] .text-blue-900,
+    [data-theme="dark"] .text-blue-800,
+    [data-theme="dark"] .text-blue-700 {
+      color: #93C5FD !important;
+    }
+    [data-theme="dark"] .bg-amber-50,
+    [data-theme="dark"] .bg-amber-50\/50,
+    [data-theme="dark"] .bg-amber-50\/70 {
+      background-color: rgba(217, 119, 6, 0.15) !important;
+      border-color: rgba(245, 158, 11, 0.35) !important;
+    }
+    [data-theme="dark"] .text-amber-800,
+    [data-theme="dark"] .text-amber-700 {
+      color: #FCD34D !important;
+    }
+    [data-theme="dark"] .bg-emerald-50,
+    [data-theme="dark"] .bg-emerald-50\/50,
+    [data-theme="dark"] .bg-emerald-50\/40 {
+      background-color: rgba(5, 150, 105, 0.15) !important;
+      border-color: rgba(16, 185, 129, 0.35) !important;
+    }
+    [data-theme="dark"] .text-emerald-800,
+    [data-theme="dark"] .text-emerald-700 {
+      color: #6EE7B7 !important;
+    }
+    [data-theme="dark"] .bg-indigo-50,
+    [data-theme="dark"] .bg-indigo-50\/40 {
+      background-color: rgba(99, 102, 241, 0.16) !important;
+      border-color: rgba(129, 140, 248, 0.35) !important;
+    }
+    [data-theme="dark"] .text-indigo-700 {
+      color: #A5B4FC !important;
+    }
+    [data-theme="dark"] .bg-violet-50,
+    [data-theme="dark"] .bg-violet-50\/70,
+    [data-theme="dark"] .bg-violet-100 {
+      background-color: rgba(139, 92, 246, 0.18) !important;
+      border-color: rgba(167, 139, 250, 0.35) !important;
+    }
+    [data-theme="dark"] .text-violet-900,
+    [data-theme="dark"] .text-violet-700 {
+      color: #C4B5FD !important;
+    }
+    [data-theme="dark"] .task-card.border-dashed {
+      background-color: var(--card-parallel-bg) !important;
+    }
+    [data-theme="dark"] .example-box {
+      background-color: rgba(15, 23, 42, 0.75) !important;
+      border-color: rgba(51, 65, 85, 0.9) !important;
+    }
+    [data-theme="dark"] .study-card {
+      background-color: rgba(15, 23, 42, 0.9) !important;
+      border-color: rgba(59, 130, 246, 0.4) !important;
+    }
+
+    /* Subtle custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
+    }
+
+    /* Dynamic Grid Columns */
+    .grid-gmp {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(126px, 1fr));
+      gap: 10px 8px;
+    }
+    .grid-nongmp {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(150px, 1fr));
+      gap: 12px 10px;
+    }
+
+    /* Task card transitions & interactive states */
+    .task-card {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .task-card.is-dimmed {
+      opacity: 0.28;
+      filter: grayscale(25%);
+    }
+    .task-card.is-selected {
+      box-shadow: 0 0 0 2px #3B82F6, 0 8px 18px -4px rgba(37, 99, 235, 0.25);
+      border-color: #3B82F6 !important;
+      background-color: var(--card-selected-bg) !important;
+      z-index: 20;
+    }
+    .task-card.is-predecessor {
+      box-shadow: 0 0 0 2px #F59E0B, 0 6px 14px -3px rgba(217, 119, 6, 0.22);
+      border-color: #F59E0B !important;
+      background-color: var(--card-pred-bg) !important;
+      z-index: 15;
+    }
+    .task-card.is-successor {
+      box-shadow: 0 0 0 2px #10B981, 0 6px 14px -3px rgba(5, 150, 105, 0.22);
+      border-color: #10B981 !important;
+      background-color: var(--card-succ-bg) !important;
+      z-index: 15;
+    }
+    .task-card.is-highlight {
+      box-shadow: 0 0 0 2px #6366F1, 0 6px 16px -3px rgba(99, 102, 241, 0.25);
+      border-color: #6366F1 !important;
+      background-color: var(--card-highlight-bg) !important;
+    }
+
+    /* Drawer transitions */
+    #inspector-drawer {
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #drawer-backdrop {
+      transition: opacity 0.22s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- Top Navigation & Controls -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-[1680px] mx-auto px-4 sm:px-6 py-4">
+      <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+        <!-- Brand & Title -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">Project &amp; Qualification Lifecycle Dashboard</h1>
+            <p class="text-xs sm:text-sm text-slate-500">Interactive SDLC &amp; GxP Compliance Guide</p>
+          </div>
+        </div>
+
+        <!-- Right Controls: Mode Switcher, Search, Theme, Export -->
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Prominent GMP vs Non-GMP Segmented Toggle -->
+          <div class="inline-flex p-1 bg-slate-100 border border-slate-200 rounded-xl" role="group" aria-label="Project Category">
+            <button
+              id="mode-gmp-btn"
+              type="button"
+              class="px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition bg-white text-blue-700 shadow-sm"
+            >
+              GMP (GxP)
+            </button>
+            <button
+              id="mode-nongmp-btn"
+              type="button"
+              class="px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900"
+            >
+              Non-GMP
+            </button>
+          </div>
+
+          <!-- Search Input -->
+          <div class="relative flex-1 sm:flex-initial min-w-[220px] sm:w-64">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
+            </svg>
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Search topic, ISO, or task..."
+              class="w-full pl-9 pr-8 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition"
+            />
+            <button
+              id="clear-search-btn"
+              type="button"
+              class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded"
+              title="Clear search"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Day / Night Mode Switch -->
+          <button
+            id="theme-toggle-btn"
+            type="button"
+            class="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98] transition shadow-sm"
+            title="Switch between Day and Night Mode"
+            aria-label="Toggle Day and Night Mode"
+          >
+            <svg id="theme-icon-sun" class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364l-1.414-1.414M7.05 7.05L5.636 5.636m12.728 0l-1.414 1.414M7.05 16.95l-1.414 1.414M12 8a4 4 0 100 8 4 4 0 000-8z" />
+            </svg>
+            <svg id="theme-icon-moon" class="w-4 h-4 text-indigo-400 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+            <span id="theme-toggle-label">Day</span>
+          </button>
+
+          <!-- Export JSON -->
+          <button
+            id="export-json-btn"
+            type="button"
+            class="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98] transition shadow-sm"
+            title="Download LIFECYCLE_KB JSON for GitHub & AI Gap Analysis"
+          >
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
+            </svg>
+            <span>Export JSON</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Actor / Role Legend & Interactive Filter Bar -->
+  <section class="bg-slate-50/80 border-b border-slate-200">
+    <div class="max-w-[1680px] mx-auto px-4 sm:px-6 py-3.5">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Actors &amp; Responsibilities</span>
+          <span class="text-xs text-slate-400">&bull; Click a role to filter "What is my job?"</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Predecessors (Entry Gate)
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Unlocked Next Steps
+          </span>
+          <button
+            id="reset-actor-btn"
+            type="button"
+            class="hidden px-2.5 py-1 rounded-lg bg-slate-200/80 hover:bg-slate-300/80 text-slate-700 font-semibold transition"
+          >
+            Show All Actors
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Actor Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <!-- User / Process Owner Actor -->
+        <button
+          type="button"
+          data-actor-filter="User"
+          class="actor-card text-left p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-sm transition flex items-start gap-3 cursor-pointer"
+        >
+          <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 mt-0.5">User</span>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-slate-800">Process Owner (User)</div>
+            <p class="text-[11px] text-slate-500 leading-relaxed mt-0.5">Accountable owner for URS, IRA, CC, DQ, FRA, Supplier Assessment, IQ/OQ/PQ, RTM, UAM, and Operational SOP &amp; Training.</p>
+          </div>
+        </button>
+
+        <!-- CSV Actor -->
+        <button
+          type="button"
+          data-actor-filter="CSV"
+          class="actor-card text-left p-3 rounded-xl bg-white border border-slate-200 hover:border-emerald-300 hover:shadow-sm transition flex items-start gap-3 cursor-pointer"
+        >
+          <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 mt-0.5">CSV</span>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-slate-800">CSV (Validation &amp; QA)</div>
+            <p class="text-[11px] text-slate-500 leading-relaxed mt-0.5">Leads Validation Plan &amp; System Release Note, ensures CPOB Annex 11 / Part 11 compliance, reviews/approves all gates, and authorizes Go-Live.</p>
+          </div>
+        </button>
+
+        <!-- IT / Supplier Actor -->
+        <button
+          type="button"
+          data-actor-filter="IT"
+          class="actor-card text-left p-3 rounded-xl bg-white border border-slate-200 hover:border-amber-300 hover:shadow-sm transition flex items-start gap-3 cursor-pointer"
+        >
+          <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0 mt-0.5">IT</span>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-slate-800">IT / Supplier (Vendor &amp; Infra)</div>
+            <p class="text-[11px] text-slate-500 leading-relaxed mt-0.5">Leads FS/DS, Development, Source Code Review &amp; Bug Fixes; provides technical execution &amp; support for IQ, OQ, Security, and Backups.</p>
+          </div>
+        </button>
+      </div>
+
+      <!-- GAMP 5 Category Filter Bar / Non-GMP Scope Filter & Quick Compliance Chips -->
+      <div class="mt-3 pt-3 border-t border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+        <!-- GAMP 5 Filter (GMP Mode Only) -->
+        <div id="gamp-filter-bar" class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-0.5">GAMP 5 Category:</span>
+          <button
+            id="gamp-info-btn"
+            type="button"
+            class="inline-flex items-center gap-1 px-2 py-0.5 mr-1 text-[11px] font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+            title="Learn the difference between GAMP Cat 1, 3, 4, 5 (and why there is no Cat 2)"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>What is GAMP?</span>
+          </button>
+          <button
+            id="backup-guide-btn"
+            type="button"
+            class="inline-flex items-center gap-1 px-2 py-0.5 mr-1 text-[11px] font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition cursor-pointer"
+            title="Zero-Redundancy Backup & Restore Guideline (DB vs. App/Git + Periodic Review)"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+            </svg>
+            <span>Backup &amp; Restore Guide</span>
+          </button>
+          <button type="button" data-gamp-cat="all" class="gamp-cat-btn px-2.5 py-1 text-xs font-semibold rounded-lg border transition bg-blue-600 text-white border-blue-600">All</button>
+          <button type="button" data-gamp-cat="1" class="gamp-cat-btn px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 transition" title="Infrastructure Software (OS, DB, Network)">Cat 1 (Infra)</button>
+          <button type="button" data-gamp-cat="3" class="gamp-cat-btn px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 transition" title="Non-Configured Commercial Software">Cat 3 (Non-Config)</button>
+          <button type="button" data-gamp-cat="4" class="gamp-cat-btn px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 transition" title="Configured Products (ERP, LIMS, eQMS)">Cat 4 (Configured)</button>
+          <button type="button" data-gamp-cat="5" class="gamp-cat-btn px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 transition" title="Custom / Bespoke Applications">Cat 5 (Custom)</button>
+        </div>
+
+        <!-- Non-GMP Scope Filter (Non-GMP Mode Only) -->
+        <div id="nongmp-filter-bar" class="hidden flex flex-wrap items-center gap-1.5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1">Non-GMP Scope:</span>
+          <button type="button" data-nongmp-filter="all" class="nongmp-filter-btn px-2.5 py-1 text-xs font-semibold rounded-lg border transition bg-blue-600 text-white border-blue-600">All Steps</button>
+          <button type="button" data-nongmp-filter="mandatory" class="nongmp-filter-btn px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 transition">Mandatory Only (URS, IRA, UAT)</button>
+          <span class="text-[11px] text-slate-400 ml-1 hidden sm:inline">&bull; Other deliverables vary by site policy</span>
+        </div>
+
+        <!-- Quick Compliance Filter Chips -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mr-1">Quick Filters:</span>
+          <button type="button" data-quick-chip="backup" class="quick-chip px-2.5 py-1 text-xs font-medium rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition">Backup &amp; Restore</button>
+          <button type="button" data-quick-chip="security" class="quick-chip px-2.5 py-1 text-xs font-medium rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition">Security &amp; UAM</button>
+          <button type="button" data-quick-chip="audit trail" class="quick-chip px-2.5 py-1 text-xs font-medium rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition">Audit Trail</button>
+          <button type="button" data-quick-chip="alcoa" class="quick-chip px-2.5 py-1 text-xs font-medium rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition">Data Integrity</button>
+          <button type="button" data-quick-chip="iso 27001" class="quick-chip px-2.5 py-1 text-xs font-medium rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition">ISO 27001</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Timeline Workspace -->
+  <main class="flex-1 max-w-[1680px] w-full mx-auto px-4 sm:px-6 py-5">
+    <!-- Active Filter Banner -->
+    <div id="filter-banner" class="hidden mb-4 px-4 py-2.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between text-xs sm:text-sm text-blue-900">
+      <span id="filter-banner-text"></span>
+      <button id="clear-all-filters-btn" type="button" class="font-semibold text-blue-700 hover:text-blue-900 underline ml-4 shrink-0">Reset</button>
+    </div>
+
+    <!-- Swimlane Timeline Card -->
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <div id="timeline-minwidth-wrapper" class="min-w-[1720px]">
+          <!-- Top Phase Headers -->
+          <div class="flex border-b border-slate-200 bg-slate-50/90 sticky top-0 z-20">
+            <div class="w-52 shrink-0 sticky left-0 z-30 bg-slate-50 border-r border-slate-200 px-4 py-3 flex items-center">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Workstream</span>
+            </div>
+            <div class="flex-1 px-4 py-2.5">
+              <div id="phase-headers-grid"></div>
+            </div>
+          </div>
+
+          <!-- Swimlanes Rows -->
+          <div id="swimlanes-container" class="divide-y divide-slate-200"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Hint -->
+    <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-slate-400 px-1">
+      <p>Hover any card to trace blocking predecessors &amp; unlocked steps. Click any card to inspect gates, standards &amp; checklists.</p>
+      <p>Checklist progress is automatically saved in your browser.</p>
+    </div>
+  </main>
+
+  <!-- Slide-Over Backdrop -->
+  <div id="drawer-backdrop" class="fixed inset-0 bg-slate-900/25 backdrop-blur-[1px] z-40 hidden opacity-0"></div>
+
+  <!-- Slide-Over Compliance Inspector Drawer -->
+  <aside
+    id="inspector-drawer"
+    class="fixed top-0 right-0 h-full w-full max-w-xl bg-white shadow-2xl border-l border-slate-200 z-50 translate-x-full flex flex-col"
+    aria-hidden="true"
+  >
+    <!-- Drawer Header -->
+    <div class="px-6 py-5 border-b border-slate-200 bg-slate-50/70 shrink-0">
+      <div class="flex items-start justify-between gap-4">
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="drawer-phase-badge" class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-blue-100 text-blue-700"></span>
+            <span id="drawer-mode-badge" class="px-2.5 py-0.5 text-[11px] font-medium rounded-full bg-slate-200/80 text-slate-700"></span>
+          </div>
+          <h2 id="drawer-title" class="text-lg font-bold text-slate-900 leading-snug"></h2>
+          <div id="drawer-actors-row" class="flex flex-wrap items-center gap-2 pt-0.5"></div>
+        </div>
+        <button
+          id="close-drawer-btn"
+          type="button"
+          class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition shrink-0"
+          title="Close inspector (Esc)"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Optional OQ/PQ Protocol Tabs (Hidden for other tasks) -->
+      <div id="oq-pq-tabs" class="hidden mt-4 flex gap-1 bg-slate-200/60 p-1 rounded-xl">
+        <button data-protocol-tab="core" type="button" class="protocol-tab-btn flex-1 py-1.5 px-3 text-xs font-semibold rounded-lg transition bg-white text-slate-900 shadow-sm">
+          Core Protocol
+        </button>
+        <button data-protocol-tab="addons" type="button" class="protocol-tab-btn flex-1 py-1.5 px-3 text-xs font-semibold rounded-lg transition text-slate-600 hover:text-slate-900">
+          Focused Add-Ons (Optional)
+        </button>
+      </div>
+    </div>
+
+    <!-- Drawer Scrollable Body -->
+    <div id="drawer-body" class="flex-1 overflow-y-auto px-6 py-5 space-y-5"></div>
+  </aside>
+
+  <!-- GAMP 5 Category Explainer Modal -->
+  <div id="gamp-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="gamp-modal-title">
+    <div id="gamp-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px]"></div>
+    <div class="relative bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden z-10">
+      <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Quick Reference Guide</span>
+          <h3 id="gamp-modal-title" class="text-base font-bold text-slate-900">GAMP 5 Software Categories (1, 3, 4, 5)</h3>
+        </div>
+        <button
+          id="close-gamp-modal-btn"
+          type="button"
+          class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer"
+          aria-label="Close GAMP Guide"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-3 max-h-[75vh] overflow-y-auto">
+        <p class="text-xs text-slate-600 leading-relaxed">
+          GAMP 5 scales validation effort based on software complexity and risk—so simple tools don't require the same heavy documentation as custom-built apps.
+        </p>
+
+        <div class="space-y-2">
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-900">Cat 1 — Infrastructure Software</span>
+              <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Lowest Effort</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Layered OS, databases, networks, and backup tools supporting apps. Focuses on IQ/OQ verification; skips FS/DS, DQ, and PQ.</p>
+            <div class="text-[11px] text-slate-500 mt-1"><span class="font-semibold text-slate-700">Examples:</span> Windows/Linux OS, Oracle/PostgreSQL DB, VMware, Antivirus.</div>
+          </div>
+
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-900">Cat 3 — Non-Configured Products</span>
+              <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-blue-50 text-blue-700 border border-blue-200">Low–Medium</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Commercial off-the-shelf software used "as-is" without customizing business workflows. Skips VP, FS/DS, DQ, Supplier Assessment &amp; PQ.</p>
+            <div class="text-[11px] text-slate-500 mt-1"><span class="font-semibold text-slate-700">Examples:</span> Standalone lab balance software, standard PDF tools, simple COTS utilities.</div>
+          </div>
+
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-900">Cat 4 — Configured Products</span>
+              <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-amber-50 text-amber-700 border border-amber-200">High Effort</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Commercial software configured to match plant workflows without changing core source code. Requires all deliverables <strong>except</strong> Source Code Review.</p>
+            <div class="text-[11px] text-slate-500 mt-1"><span class="font-semibold text-slate-700">Examples:</span> ERP (Oracle/SAP), LIMS, eQMS, SCADA, Commercial CMMS.</div>
+          </div>
+
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-900">Cat 5 — Custom Applications</span>
+              <span class="px-2 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 text-indigo-700 border border-indigo-200">Full Validation</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Bespoke applications coded from scratch by internal IT or a vendor. Highest risk—requires every qualification deliverable <strong>including Source Code Review</strong>.</p>
+            <div class="text-[11px] text-slate-500 mt-1"><span class="font-semibold text-slate-700">Examples:</span> In-house web apps, custom middleware/APIs, custom MES scripts.</div>
+          </div>
+        </div>
+
+        <!-- Why is there no Cat 2? -->
+        <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 flex items-start gap-2.5">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+          </svg>
+          <div class="text-[11px] text-slate-700 leading-relaxed">
+            <span class="font-bold text-amber-800">Where is Category 2?</span> Category 2 (Firmware) was officially <strong>retired in GAMP 5</strong> and merged into Cat 3, 4, or 5 based on complexity. Global pharma standards intentionally kept the numbering <strong>1, 3, 4, 5</strong> for historical continuity.
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 border-t border-slate-200 bg-slate-50/60 flex justify-end">
+        <button id="gamp-modal-ok-btn" type="button" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition cursor-pointer">
+          Got it
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zero-Redundancy Backup & Restore Guideline Modal -->
+  <div id="backup-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="backup-modal-title">
+    <div id="backup-modal-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px]"></div>
+    <div class="relative bg-white border border-slate-200 rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden z-10">
+      <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">IT &amp; CSV Practical Guideline (GAMP 5 &amp; ISO 27001)</span>
+          <h3 id="backup-modal-title" class="text-base font-bold text-slate-900">Zero-Redundancy Backup &amp; Restore Strategy</h3>
+        </div>
+        <button
+          id="close-backup-modal-btn"
+          type="button"
+          class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer"
+          aria-label="Close Backup Guide"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 max-h-[76vh] overflow-y-auto">
+        <!-- Core Objective -->
+        <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-slate-700 leading-relaxed">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-blue-700 mb-1">Core Regulatory Objective (CPOB Annex 11 Sec 7.2 &bull; 21 CFR 11.10(c) &bull; ISO 27001 A.8.13)</div>
+          Guarantee that <strong>GxP Data &amp; Audit Trails</strong> cannot be lost or corrupted and can be recovered <strong>100% intact (ALCOA+)</strong> within business-agreed <strong>RPO &amp; RTO</strong> targets. Under GAMP 5 Critical Thinking, do <strong>not</strong> repeat identical restore tests across IQ, OQ, and PQ.
+        </div>
+
+        <!-- 4 Components: DB vs Application -->
+        <div>
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">1. Database vs. Application (Win-Win IT &amp; CSV Split)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-900">Backup Database</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Mandatory Daily</span>
+              </div>
+              <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Automated scheduled DB dump (encrypted + offsite/DR copy) because GxP transactions &amp; Audit Trails grow continuously.</p>
+            </div>
+
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-900">Restore Database</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-50 text-amber-700 border border-amber-200">Test 1&times; in OQ</span>
+              </div>
+              <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Executed once in <strong>Staging (Server Q)</strong> during OQ. Proves 100% data &amp; Audit Trail recovery within RTO with zero risk to Production.</p>
+            </div>
+
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-900">Backup Application</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-blue-50 text-blue-700 border border-blue-200">Git Tag / Snapshot</span>
+              </div>
+              <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Application binaries are static between Change Controls. Controlled <strong>Git release tags (e.g., <code>v1.0.0</code>)</strong> + config/VM snapshot satisfy app backup.</p>
+            </div>
+
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-900">Restore Application</span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-indigo-50 text-indigo-700 border border-indigo-200">Leverage IQ / VM</span>
+              </div>
+              <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">Do <strong>not</strong> manually rebuild apps from scratch during OQ/PQ. Git deployment during <strong>IQ</strong> already proves app rebuild; use <strong>VM Snapshots</strong> at infra level for DR.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lifecycle Stage Map -->
+        <div>
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">2. Where It Happens &amp; Required Evidence (Zero Duplication)</div>
+          <div class="space-y-2 text-[11px]">
+            <div class="p-2.5 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-start gap-2">
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-bold shrink-0 w-28 text-center">URS &amp; FDS</span>
+              <div class="text-slate-600 leading-relaxed"><strong class="text-slate-800">Define &amp; Design:</strong> URS states Retention (e.g., 10 yrs), RPO &amp; RTO. FDS defines DB cron schedule, encryption, offsite vault, Git repo &amp; restore runbook.</div>
+            </div>
+            <div class="p-2.5 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-start gap-2">
+              <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-bold shrink-0 w-28 text-center">IQ (Stg &amp; Prod)</span>
+              <div class="text-slate-600 leading-relaxed"><strong class="text-slate-800">Config Check ONLY (No Restore Test):</strong> Verify backup job active, first DB dump &gt; 0 KB created, and Git tag deploy log (proves app installation/rebuild).</div>
+            </div>
+            <div class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/40 flex flex-col sm:flex-row sm:items-start gap-2">
+              <span class="px-2 py-0.5 rounded bg-emerald-600 text-white font-bold shrink-0 w-28 text-center">OQ (Staging)</span>
+              <div class="text-slate-700 leading-relaxed"><strong class="text-emerald-800">EXECUTE 1&times; FULL DB RESTORE TEST:</strong> (1) Screenshot dummy data + Audit Trail &rarr; (2) Trigger DB backup &rarr; (3) Delete/corrupt Staging DB &rarr; (4) Execute DB restore &amp; log RTO duration &rarr; (5) Verify 100% data &amp; Audit Trail intact.</div>
+            </div>
+            <div class="p-2.5 rounded-xl border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-start gap-2">
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-bold shrink-0 w-28 text-center">PQ (Prod)</span>
+              <div class="text-slate-600 leading-relaxed"><strong class="text-slate-800">DO NOT REPEAT:</strong> Leverage OQ Staging pass result + IQ Prod backup config. Never run destructive restore tests against Production DB (ISO 27001 A.8.31).</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Post Go-Live Periodic Review -->
+        <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-amber-800">3. Post Go-Live: SOP &amp; Periodic Review (Multi-App Portfolio)</div>
+          <p class="text-[11px] text-slate-700 leading-relaxed">
+            For ongoing Production proof, use <strong>Cross-Environment Restore</strong> (<code>Prod DB Backup &rarr; Restore into Isolated Staging/DR Sandbox</code>). Because IT manages many apps, IT &amp; CSV should agree on a <strong>Risk-Based Periodic Restore Schedule</strong> inside the Periodic Review SOP:
+          </p>
+          <ul class="text-[11px] text-slate-700 list-disc pl-4 space-y-1">
+            <li><strong>Critical / High-Risk Apps (ERP, LIMS, ePM, eQMS):</strong> 1&times; annual DB restore drill into isolated Staging/DR.</li>
+            <li><strong>Medium / Low-Risk Apps:</strong> Rotating cluster sampling (e.g., 1–2 representative apps per shared DB server/year) when backup methods are identical.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 border-t border-slate-200 bg-slate-50/60 flex justify-end">
+        <button id="backup-modal-ok-btn" type="button" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition cursor-pointer">
+          Understood
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div
+    id="toast"
+    class="fixed bottom-5 right-5 z-50 px-4 py-2.5 bg-slate-900 text-white text-xs font-medium rounded-xl shadow-lg opacity-0 pointer-events-none transition-opacity duration-200 flex items-center gap-2"
+  >
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    <span id="toast-message">Action completed</span>
+  </div>
+
+  <script>
+    /**
+     * ============================================================================
+     * LIFECYCLE_KB — Structured GMP & Non-GMP Knowledge Base
+     * Clean, general-purpose compliance rubric ready for GitHub Pages & Phase 2 AI.
+     * ============================================================================
+     */
+    const THEME_STORAGE_KEY = "gmp_dashboard_theme";
+    const CHECKLIST_STORAGE_KEY = "gmp_dashboard_checklist_v2";
+
+    const ACTOR_STYLES = {
+      User: {
+        lead: "bg-indigo-600 text-white border-indigo-600",
+        support: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        cardActive: "ring-2 ring-indigo-500 border-indigo-500 bg-indigo-50/40"
+      },
+      CSV: {
+        lead: "bg-emerald-600 text-white border-emerald-600",
+        support: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        cardActive: "ring-2 ring-emerald-500 border-emerald-500 bg-emerald-50/40"
+      },
+      IT: {
+        lead: "bg-amber-600 text-white border-amber-600",
+        support: "bg-amber-50 text-amber-700 border-amber-200",
+        cardActive: "ring-2 ring-amber-500 border-amber-500 bg-amber-50/40"
+      }
+    };
+
+    const OPTIONAL_PROTOCOL_ADDONS = [
+      {
+        id: "addon_data_verification",
+        title: "Data Verification Testing (App-to-App / API / Middleware)",
+        badge: "Integration Focus",
+        whenToUse: "Use when the application exchanges GxP records with another system through an API, service bus, or middleware layer and you want focused verification separate from core UI scripts.",
+        checklist: [
+          {
+            text: "Record Count Reconciliation (Source = Middleware = Target)",
+            example: "e.g., \"100 Work Orders extracted from ERP = 100 payloads logged by Middleware = 100 records saved in target app (0 silent drops).\""
+          },
+          {
+            text: "Field-Level Data Accuracy (precision, dates, encoding, mandatory mapping)",
+            example: "e.g., \"Batch weight `12.450 kg` and UTC+7 timestamps match bit-for-bit between source and target tables.\""
+          },
+          {
+            text: "Error Handling, Retry Queue & Resilience Testing",
+            example: "e.g., \"Simulated API timeout for 2 minutes; middleware queued payload, alerted IT admin, and auto-retried cleanly upon recovery.\""
+          },
+          {
+            text: "Idempotency / Duplicate Prevention",
+            example: "e.g., \"Re-sent identical JSON payload twice; target system rejected duplicate key without creating duplicate GxP record.\""
+          }
+        ],
+        gxpStandards: ["CPOB Annex 11 (Sec 5, 6)", "MHRA / WHO ALCOA+"],
+        isoStandards: ["ISO/IEC 25012", "ISO/IEC 29119"]
+      },
+      {
+        id: "addon_data_migration",
+        title: "Data Migration Verification",
+        badge: "Legacy Cutover",
+        whenToUse: "Use when migrating historical GxP master data or open transactional records from a legacy application or spreadsheet into the new Production database.",
+        checklist: [
+          {
+            text: "Pre-migration data cleansing & mapping specification approved",
+            example: "e.g., \"Mapped 1,250 legacy equipment IDs to new schema and resolved 14 obsolete asset codes prior to load.\""
+          },
+          {
+            text: "100% row count + statistical/critical field reconciliation post-load",
+            example: "e.g., \"Automated SQL checksum confirmed 1,250/1,250 records migrated with zero truncation or null corruption.\""
+          },
+          {
+            text: "Legacy read-only archive & retention plan verified",
+            example: "e.g., \"Legacy database locked to read-only mode and archived for 10-year regulatory retention.\""
+          }
+        ],
+        gxpStandards: ["CPOB Annex 11 (Sec 4.8, 7)", "MHRA / WHO ALCOA+"],
+        isoStandards: ["ISO/IEC 25012"]
+      },
+      {
+        id: "addon_esig",
+        title: "Electronic Signature Verification (21 CFR Part 11)",
+        badge: "ERES Control",
+        whenToUse: "Use when electronic approvals replace wet-ink signatures on GxP batch records, deviations, calibration approvals, or release decisions.",
+        checklist: [
+          {
+            text: "Unique credentials & re-authentication required at signing moment",
+            example: "e.g., \"Clicking 'QA Approve' opens a modal requiring User ID + Password re-entry even during an active session.\""
+          },
+          {
+            text: "Signature manifestation displays Printed Name, Date/Time & Meaning",
+            example: "e.g., \"Approved PDF clearly prints: 'Signed by Budi Santoso | 2026-11-23 14:05 WIB | Meaning: QA Batch Approval'.\""
+          },
+          {
+            text: "Signed record is permanently linked & locked against silent modification",
+            example: "e.g., \"Attempting to edit a signed record via UI or API is blocked and logged; changes require formal un-approve/re-sign workflow.\""
+          }
+        ],
+        gxpStandards: ["CPOB Annex 11 (Sec 14)", "21 CFR Part 11 (11.50, 11.200)"],
+        isoStandards: ["ISO/IEC 27001 (A.8.24)"]
+      }
+    ];
+
+    const LIFECYCLE_KB = {
+      metadata: {
+        name: "Project & Qualification Lifecycle Knowledge Base",
+        version: "2.4.0",
+        modes: ["GMP", "Non-GMP"],
+        gampCategories: {
+          1: "Infrastructure Software (OS, DB, Network)",
+          3: "Non-Configured Commercial Software (COTS used as-is)",
+          4: "Configured Products (ERP, LIMS, eQMS — skips Source Code Review)",
+          5: "Custom / Bespoke Applications (Full lifecycle + Source Code Review)"
+        },
+        gampNote: "GAMP Category 2 (Firmware) was retired in GAMP 5; numbering 1, 3, 4, 5 is preserved globally.",
+        nonGmpPolicyNote: "Mandatory across all sites: URS, IRA, and UAT. Other deliverables (Charter, FDS, SIT, User Guide, Release Note) are site-optional.",
+        appVersionTrackingDocs: [
+          "Development & Source Code Review (Git tag e.g., v1.0.0-rc1 & commit SHA)",
+          "IQ Staging & IQ Production (Installed build tag proving Staging == Prod)",
+          "OQ & PQ Reports (Tested version + re-tested version after bug fixes)",
+          "VSR & System Release Note (Final validated Go-Live version e.g., v1.0.0)"
+        ],
+        backupRestoreGuideline: {
+          objective: "Guarantee GxP Data & Audit Trails remain intact, readable, and recoverable within agreed RPO & RTO (CPOB Annex 11 Sec 7.2, 21 CFR 11.10(c), ISO 27001 A.8.13).",
+          databaseBackup: "Mandatory automated daily encrypted DB dump with offsite/DR copy.",
+          databaseRestore: "Executed 1x ONLY in OQ Staging (Server Q). Never repeated in IQ or PQ.",
+          applicationBackup: "Controlled via Git release tags (e.g., v1.0.0) + configuration/VM snapshots.",
+          applicationRestore: "Leverage IQ deployment from Git (proves rebuild) + infra-level VM snapshots; do not manually rebuild per qualification stage.",
+          periodicReviewStrategy: "Cross-Environment Restore (Prod DB backup -> isolated Staging/DR). IT & CSV agree on Risk-Based Schedule: Critical apps 1x/year; Medium/Low apps via rotating DB server cluster sampling."
+        },
+        supplierAssessmentLeverageRule: "Applies at Vendor / Internal IT organization level (not per application). Leverage existing valid Qualified Supplier Assessment (e.g., SA-IT-2025-001) in VP & VSR.",
+        actors: {
+          User: "Process Owner — Accountable owner for URS, IRA, CC, DQ, FRA, Supplier Assessment, IQ/OQ/PQ, RTM, UAM, and Operational SOP & Training.",
+          CSV: "Validation & QA — Leads Validation Plan & System Release Note, verifies CPOB Annex 11 / 21 CFR Part 11 compliance, and approves all quality gates.",
+          IT: "IT / Supplier — Leads FS/DS, Development, Source Code Review & Bug Fixes; executes technical IQ, OQ, Security, and Backup controls."
+        }
+      },
+
+      /**
+       * Standards Study Glossary — Powers clickable GxP & ISO Study Cards
+       */
+      standardsGlossary: {
+        "CPOB Annex 11": {
+          category: "Primary GxP (BPOM / EU GMP)",
+          fullTitle: "BPOM CPOB / EU GMP Annex 11 — Computerised Systems",
+          summary: "Core pharmaceutical regulation governing validated computerized systems used in GMP manufacturing, QC, and distribution so electronic systems achieve equal or greater quality assurance than manual processes.",
+          clauses: {
+            "1": "Risk Management: Apply quality risk management throughout the lifecycle based on patient safety, data integrity, and product quality.",
+            "2": "Personnel: All staff (Process Owner, QA/CSV, IT) must have clearly defined roles, qualifications, and documented training.",
+            "3": "Suppliers & Service Providers: Formal vendor assessment, written agreements/SLAs, and quality system audits for external suppliers.",
+            "4": "Validation: Lifecycle documentation (VP, DQ, IQ, OQ, PQ, VSR) proving system fitness for intended GxP use.",
+            "4.4": "User Requirements Specifications (URS) must be traceable throughout the entire lifecycle (RTM).",
+            "4.5": "Regulated user must ensure system design/development follows an appropriate Quality Management System (FS/DS & SDLC).",
+            "4.6": "Installation Qualification (IQ): Verify hardware, OS, software versions, and environment setup.",
+            "4.7": "Operational Qualification (OQ): Test system functions, negative/boundary cases, security, audit trails, and backups.",
+            "4.8": "Performance Qualification (PQ): Confirm end-to-end fitness in Production under real-world operational conditions.",
+            "5": "Data Transfer: Electronic data exchange between systems must include built-in checks for accurate and secure transfer.",
+            "6": "Accuracy Checks: Critical manual or automated data entries must be validated for format, range, and accuracy.",
+            "7": "Data Storage: Protect data physically and electronically against damage, loss, or unauthorized alteration.",
+            "7.1": "Data must be checked for accessibility, readability, and accuracy throughout the retention period.",
+            "7.2": "Regular backups of all relevant GxP data must be performed and periodically verified via restore testing.",
+            "8": "Printouts: Ability to generate clear printed/PDF copies of electronically stored GxP data, including audit trail indicators.",
+            "9": "Audit Trails: System-generated, read-only, time-stamped log of GxP data creation, modification, or deletion with reason for change.",
+            "10": "Change & Configuration Management: Any change to a validated system must follow formal Change Control and release authorization.",
+            "11": "Periodic Evaluation: Validated systems must undergo periodic review to confirm they remain in a validated state.",
+            "12": "Security: Physical and logical access controls restricting system use strictly to authorized personnel (RBAC & UAM).",
+            "12.1": "Access controls must prevent unauthorized data entry, changes, or deletions.",
+            "12.3": "Creation, modification, and cancellation of user access authorizations must be formally recorded.",
+            "13": "Incident Management: All system failures, deviations, and data errors must be logged, assessed, and resolved via CAPA.",
+            "14": "Electronic Signatures: Must have permanent link to their records, carry the same legal impact as handwritten signatures, and include timestamp.",
+            "16": "Business Continuity: Validated alternative/manual arrangements (BCP SOP) must exist in case of critical system downtime.",
+            "17": "Archiving: Archived GxP data must remain accessible, readable, and protected throughout required retention periods."
+          }
+        },
+        "21 CFR Part 11": {
+          category: "Primary GxP (FDA)",
+          fullTitle: "FDA 21 CFR Part 11 — Electronic Records; Electronic Signatures",
+          summary: "US FDA regulation setting technical and procedural criteria under which electronic records and electronic signatures are considered trustworthy, reliable, and equivalent to paper records.",
+          clauses: {
+            "11.10": "Controls for Closed Systems: Validation, accurate copies, record protection, access limits, audit trails, and authority checks.",
+            "11.10(c)": "Protection of records to enable accurate and ready retrieval throughout the retention period (Backup & Archiving).",
+            "11.10(d)": "Limiting system access strictly to authorized individuals (User Access Matrix & RBAC).",
+            "11.10(e)": "Use of secure, computer-generated, time-stamped audit trails that do not obscure previously recorded information.",
+            "11.10(g)": "Use of authority checks to ensure only authorized individuals can use the system, sign records, or alter data.",
+            "11.50": "Signature Manifestations: Signed electronic records must clearly display printed name, date/time, and meaning of signature.",
+            "11.100": "General Requirements for E-Signatures: Each e-signature must be unique to one individual and never reassigned.",
+            "11.200": "E-Signature Components: Non-biometric signatures must use at least two distinct identification components (e.g., ID + Password)."
+          }
+        },
+        "GAMP 5": {
+          category: "Industry Framework (ISPE)",
+          fullTitle: "ISPE GAMP 5 (2nd Edition) — Good Automated Manufacturing Practice",
+          summary: "Risk-based industry standard for Computer System Validation (CSV), promoting Critical Thinking, supplier leverage, and scalable lifecycle effort by software Category (1, 3, 4, 5).",
+          clauses: {}
+        },
+        "ICH Q9": {
+          category: "Primary GxP (Quality Risk)",
+          fullTitle: "ICH Q9 — Quality Risk Management (QRM)",
+          summary: "International guideline establishing systematic principles for assessing, controlling, communicating, and reviewing quality risks (such as IRA and FMEA-based FRA).",
+          clauses: {}
+        },
+        "EU GMP Annex 15": {
+          category: "Primary GxP (Qualification)",
+          fullTitle: "EU GMP / CPOB Annex 15 — Qualification and Validation",
+          summary: "Defines formal Qualification stages (DQ, IQ, OQ, PQ), protocol pre-approval before execution, deviation handling, and Validation Summary Reporting.",
+          clauses: {}
+        },
+        "MHRA / WHO ALCOA+": {
+          category: "Data Integrity Guidance",
+          fullTitle: "MHRA / WHO / PIC/S Data Integrity — ALCOA+ Principles",
+          summary: "Requires all GxP data to be Attributable, Legible, Contemporaneous, Original, Accurate, plus Complete, Consistent, Enduring, and Available throughout its lifecycle.",
+          clauses: {}
+        },
+        "Company SDLC Policy": {
+          category: "Internal Governance",
+          fullTitle: "Internal Corporate IT & SDLC Governance Policy",
+          summary: "Standard internal software development lifecycle controls for Non-GMP systems—ensuring baseline URS, IRA (Non-GMP proof), and UAT sign-off while keeping site-level documentation flexible.",
+          clauses: {}
+        },
+        "ISO/IEC 27001": {
+          category: "Supporting ISO (Information Security)",
+          fullTitle: "ISO/IEC 27001:2022 — Information Security Management System",
+          summary: "Global standard for protecting confidentiality, integrity, and availability (CIA) of IT systems, databases, networks, and backups.",
+          clauses: {
+            "A.5.3": "Segregation of Duties: Separate conflicting duties (e.g., IT Admin cannot approve GxP records; Operator cannot self-approve).",
+            "A.5.15": "Access Control: Rules restricting logical access to applications and data based on business and least-privilege needs.",
+            "A.5.18": "Access Rights: Formal provisioning, periodic review, modification, and prompt revocation of user accounts.",
+            "A.5.19": "Information Security in Supplier Relationships: Assessing and mitigating vendor security risks.",
+            "A.8.2": "Privileged Access Rights: Restricting and closely monitoring Admin/DBA elevated accounts.",
+            "A.8.5": "Secure Authentication: Strong passwords, SSO/LDAP integration, MFA, account lockout, and session timeouts.",
+            "A.8.13": "Information Backup: Automated backup copies of data and software maintained and regularly tested via restores.",
+            "A.8.15": "Logging: Producing, storing, protecting, and analyzing tamper-resistant activity/audit logs.",
+            "A.8.20": "Networks Security: Firewalls, network segmentation, and secure port configurations.",
+            "A.8.24": "Use of Cryptography: TLS 1.2/1.3 encryption in transit, AES-256 at rest, and secure digital signature keys.",
+            "A.8.25": "Secure Development Life Cycle: Security reviews, static code checks, and controlled source code repositories.",
+            "A.8.31": "Separation of Environments: Strict isolation between Development, Staging (Q), and Production (P) environments."
+          }
+        },
+        "ISO 9001": {
+          category: "Supporting ISO (Quality Management)",
+          fullTitle: "ISO 9001:2015 — Quality Management Systems",
+          summary: "Foundational quality management standard covering document control, design verification, change management, supplier evaluation, and corrective actions (CAPA).",
+          clauses: {
+            "7.5": "Documented Information: Formal version control, review, approval, distribution, and retention of SOPs and records.",
+            "8.3.4": "Design & Development Controls: Formal reviews and Design Qualification confirming outputs meet input requirements.",
+            "8.4": "Control of Externally Provided Processes: Evaluating, selecting, and monitoring software vendors/suppliers.",
+            "8.5.6": "Control of Changes: Reviewing and authorizing changes before deployment to maintain ongoing conformity.",
+            "10.2": "Nonconformity and Corrective Action: Logging deviations, analyzing root cause, and verifying effective CAPA."
+          }
+        },
+        "ISO 31000": {
+          category: "Supporting ISO (Risk Management)",
+          fullTitle: "ISO 31000 / IEC 31010 — Risk Management & FMEA Techniques",
+          summary: "Provides structured risk identification, analysis (Severity × Probability × Detectability), evaluation, and mitigation tracking.",
+          clauses: {}
+        },
+        "ISO/IEC 29148": {
+          category: "Supporting ISO (Requirements Engineering)",
+          fullTitle: "ISO/IEC/IEEE 29148 — Requirements Engineering",
+          summary: "Best-practice standard for writing unambiguous, testable, uniquely identified User Requirements (URS) and maintaining bidirectional traceability (RTM).",
+          clauses: {}
+        },
+        "ISO/IEC 12207": {
+          category: "Supporting ISO (Software Lifecycle)",
+          fullTitle: "ISO/IEC/IEEE 12207 — Software Life Cycle Processes",
+          summary: "Defines structured software architecture, functional design (FDS), coding, peer review, configuration management, and controlled release processes.",
+          clauses: {}
+        },
+        "ISO/IEC 29119": {
+          category: "Supporting ISO (Software Testing)",
+          fullTitle: "ISO/IEC/IEEE 29119 — Software Testing Standards",
+          summary: "Framework for risk-based testing, test protocol design, positive/negative/boundary test execution (SIT, OQ, PQ, UAT), and defect reporting.",
+          clauses: {}
+        },
+        "ISO/IEC 25012": {
+          category: "Supporting ISO (Data Quality)",
+          fullTitle: "ISO/IEC 25012 — Data Quality Model",
+          summary: "Defines measurable data quality attributes including Accuracy, Completeness, Consistency, Credibility, and Currentness for integrations and migrations.",
+          clauses: {}
+        },
+        "ISO/IEC 25010": {
+          category: "Supporting ISO (Software Quality)",
+          fullTitle: "ISO/IEC 25010 — Systems & Software Quality Models",
+          summary: "Covers functional suitability, performance efficiency, compatibility, usability, reliability, and security attributes.",
+          clauses: {}
+        },
+        "ISO 22301": {
+          category: "Supporting ISO (Business Continuity)",
+          fullTitle: "ISO 22301 — Business Continuity Management",
+          summary: "Standard for RPO/RTO recovery targets, disaster recovery drills, and manual continuity procedures during system outages.",
+          clauses: {}
+        },
+        "ISO/IEC 20000": {
+          category: "Supporting ISO (IT Service Mgmt)",
+          fullTitle: "ISO/IEC 20000 — IT Service Management (ITSM)",
+          summary: "Governs IT Change Management, Release & Deployment Management, Incident Management, and L1/L2 Production support SLAs.",
+          clauses: {}
+        }
+      },
+
+      /**
+       * ======================================================================
+       * GMP (GxP) LIFECYCLE — Aligned with Official CSV Flowchart + Fast-Track
+       * 12 Columns across 5 Workstream Swimlanes
+       * ======================================================================
+       */
+      gmp: {
+        phases: [
+          { title: "Phase 1", subtitle: "Initiation & URS (Fast-Track)", span: 3, color: "text-blue-600" },
+          { title: "Phase 2", subtitle: "Design, Risk & Vendor", span: 4, color: "text-indigo-600" },
+          { title: "Phase 3", subtitle: "Build & Staging (IQ / OQ)", span: 2, color: "text-amber-600" },
+          { title: "Phase 4", subtitle: "Prod Qualification & Release", span: 3, color: "text-emerald-600" }
+        ],
+        swimlanes: [
+          { id: "gmp_gov", title: "1. Governance & Vendor", subtitle: "IRA, CC, VP & Supplier", accent: "bg-blue-500" },
+          { id: "gmp_specs", title: "2. Specs & Risk", subtitle: "URS, FS/DS & FRA", accent: "bg-indigo-500" },
+          { id: "gmp_build", title: "3. Design & Build", subtitle: "DQ, Dev & Code Review", accent: "bg-violet-500" },
+          { id: "gmp_qual", title: "4. Qualification (IQ/OQ/PQ)", subtitle: "Staging & Production Tests", accent: "bg-amber-500" },
+          { id: "gmp_release", title: "5. Readiness & Release", subtitle: "UAM, SOP, RTM & Release", accent: "bg-emerald-500" }
+        ],
+        tasks: [
+          {
+            id: "gmp_ira",
+            swimlane: "gmp_gov",
+            phase: "Phase 1: Initiation & URS",
+            title: "Initial Risk Assessment (IRA)",
+            colStart: 1,
+            colSpan: 1,
+            mode: "Parallel Track",
+            gampCategories: [1, 3, 4, 5],
+            leadActor: "User",
+            supportActors: ["CSV"],
+            predecessors: [],
+            successors: ["gmp_cc", "gmp_vp"],
+            keywords: ["ira", "initial risk assessment", "gxp", "part 11", "gamp", "criticality"],
+            softGate: "Can start immediately once a minimum URS Draft / project scope exists.",
+            entryGate: "Minimum URS Draft describing intended business use & impacted GxP processes.",
+            exitGate: "Approved IRA confirming GxP impact (Direct/Indirect), GAMP Category (1/3/4/5), and 21 CFR Part 11 applicability.",
+            watchout: "IRA runs hand-in-hand with URS Draft—don't wait for final URS approval to screen whether the project is GMP or Non-GMP.",
+            checklist: [
+              { text: "GxP impact screening (Patient Safety, Product Quality, Data Integrity)", example: "e.g., \"Direct GxP Impact: System manages preventive maintenance schedules for sterile filling equipment.\"" },
+              { text: "21 CFR Part 11 / CPOB Annex 11 ERES applicability check", example: "e.g., \"Electronic Records = Yes; Electronic Signatures = Yes (QA approval required).\"" },
+              { text: "GAMP 5 Software Category (1, 3, 4, or 5) formally assigned", example: "e.g., \"Classified as GAMP Category 5 (Custom in-house web app) — full validation + Source Code Review required.\"" },
+              { text: "Process Owner & CSV approval signatures obtained", example: "e.g., \"IRA-2026-014 signed by Engineering Manager & CSV Lead.\"" }
+            ],
+            gxpStandards: ["ICH Q9", "CPOB Annex 11 (Sec 1)", "GAMP 5"],
+            isoStandards: ["ISO 31000"]
+          },
+          {
+            id: "gmp_cc",
+            swimlane: "gmp_gov",
+            phase: "Phase 1: Initiation & URS",
+            title: "Change Control (CC)",
+            colStart: 2,
+            colSpan: 1,
+            mode: "Sequential Gate",
+            gampCategories: [1, 3, 4, 5],
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: ["gmp_ira", "gmp_urs"],
+            successors: ["gmp_vp", "gmp_fds"],
+            keywords: ["change control", "cc", "initiation", "rollback", "impact", "approval"],
+            softGate: "Can begin drafting CC ticket as soon as URS Draft & IRA outcome are clear.",
+            entryGate: "Approved IRA and URS Draft justifying the regulated change.",
+            exitGate: "Approved Change Control ticket formally authorizing project execution & validation.",
+            watchout: "No regulated build or production deployment may proceed without an open, QA-approved Change Control number.",
+            checklist: [
+              { text: "Business justification & scope of change clearly stated", example: "e.g., \"Replace paper preventive maintenance logbooks with validated ePM system across 3 plant sites.\"" },
+              { text: "Cross-functional impact assessment (QA, Regulatory, IT, Validation)", example: "e.g., \"Impacts SOP-ENG-012; requires full CSV Cat 5 qualification; zero impact to product registration.\"" },
+              { text: "Target sites, rollback strategy & required deliverables listed", example: "e.g., \"Rollback: revert to controlled paper forms per BCP SOP if critical Go-Live failure occurs.\"" },
+              { text: "QA / Change Review Board pre-approval obtained", example: "e.g., \"CC-2026-042 approved by QA Manager before Development & Qualification start.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 10)", "GAMP 5"],
+            isoStandards: ["ISO 9001 (Sec 8.5.6)", "ISO/IEC 20000"]
+          },
+          {
+            id: "gmp_vp",
+            swimlane: "gmp_gov",
+            phase: "Phase 1: Initiation & URS",
+            title: "Validation Plan (VP)",
+            colStart: 3,
+            colSpan: 1,
+            mode: "Sequential Gate",
+            gampCategories: [4, 5],
+            leadActor: "CSV",
+            supportActors: ["User", "IT"],
+            predecessors: ["gmp_ira", "gmp_cc"],
+            successors: ["gmp_dq", "gmp_fra"],
+            keywords: ["validation plan", "vp", "scope", "strategy", "roles", "gamp"],
+            softGate: "CSV can start drafting VP once IRA confirms GAMP Cat 4/5 and CC is submitted.",
+            entryGate: "Approved IRA & Approved Change Control (CC).",
+            exitGate: "Approved Validation Plan locking in validation deliverables, roles, and acceptance criteria.",
+            watchout: "Required for GAMP Cat 4 & 5. Make sure the VP explicitly lists whether Data Verification or E-Signature add-ons are in scope.",
+            checklist: [
+              { text: "System boundaries, environments (Staging/Prod) & GAMP category defined", example: "e.g., \"Scope covers ePM Web App (Cat 5) + Middleware API across Server Q (Staging) and Server P (Prod).\"" },
+              { text: "Complete list of required deliverables & approval matrix", example: "e.g., \"Mandatory: URS, FS/DS, DQ, FRA, Supplier Assessment, Code Review, IQ, OQ, PQ, RTM, SOP, Release Note.\"" },
+              { text: "Roles & responsibilities (Process Owner, CSV, IT/Supplier)", example: "e.g., \"Process Owner authors URS/PQ; IT authors FS/DS & executes IQ; CSV approves all protocols & Release Note.\"" },
+              { text: "Validation acceptance criteria & deviation handling rules", example: "e.g., \"100% critical/major deviations closed prior to Go-Live; 100% URS traced in RTM.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 1, 2, 4)", "GAMP 5"],
+            isoStandards: ["ISO/IEC 12207"]
+          },
+          {
+            id: "gmp_urs",
+            swimlane: "gmp_specs",
+            phase: "Phase 1: Initiation & URS",
+            title: "URS (Draft → Approval)",
+            colStart: 1,
+            colSpan: 3,
+            mode: "Parallel Track",
+            gampCategories: [1, 3, 4, 5],
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: [],
+            successors: ["gmp_cc", "gmp_fds", "gmp_dq", "gmp_pq"],
+            keywords: ["urs", "user requirement", "user story", "technical requirement", "alcoa", "audit trail", "backup", "restore", "rpo", "rto", "security", "sod", "e-signature", "iso 27001"],
+            softGate: "Starts Day 1. Minimum URS Draft unlocks IRA, CC, VP, and early FS/DS drafting.",
+            entryGate: "Business process scope identified by Process Owner.",
+            exitGate: "Formally Approved URS with unique IDs locking the baseline for FS/DS approval, DQ, and PQ.",
+            watchout: "URS must describe WHAT the business needs—including business-level technical needs (PC/Tablet access, RPO/RTO, capacity)—never HOW IT codes it (no SQL tables or app build version tags in URS).",
+            checklist: [
+              { text: "Functional Requirements / User Stories with unique IDs (Mandatory vs. Desirable)", example: "e.g., \"URS-FUNC-001 (M): As a Technician, I enter machine temperature and the system auto-marks PASS (98–102°C) or FAIL.\"" },
+              { text: "Business-Level Technical & Access Needs (PC/Tablet, Capacity, Performance)", example: "e.g., \"URS-TECH-001 (M): Accessible via Web Browser on PC and Android Tablets in production; supports 30 concurrent users (<3s load).\"" },
+              { text: "Data Integrity (ALCOA+) rules: no backdating or silent overwrites", example: "e.g., \"URS-DI-001 (M): Entry dates lock automatically to server NTP time; hard-deletion of GxP records is prohibited.\"" },
+              { text: "Audit Trail requirements (User, NTP Timestamp, Old/New Value, Reason)", example: "e.g., \"URS-AT-001 (M): Every edit to calibration limits logs User ID, NTP timestamp, old/new value, and mandatory reason.\"" },
+              { text: "High-level Security, User Roles & Segregation of Duties (SoD)", example: "e.g., \"URS-SEC-001 (M): Auto-logout after 15 min idle; Technician who executes a Work Order cannot approve their own record.\"" },
+              { text: "Backup, Restore, Retention period, RPO & RTO targets", example: "e.g., \"URS-BKP-001 (M): Retain GxP data for 10 years; RPO ≤ 24 hours (daily DB backup); RTO ≤ 4 hours.\"" },
+              { text: "Interface/Integration & Electronic Signature business needs (if applicable)", example: "e.g., \"URS-INT-001 (M): Pull master equipment list daily from ERP; URS-ESIG-001 (M): QA approval requires ID+Password re-entry.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.4, 5, 7, 9, 12, 14)", "21 CFR Part 11 (11.10)"],
+            isoStandards: ["ISO/IEC 29148", "ISO/IEC 27001 (A.8.13, A.8.15)", "ISO 22301"]
+          },
+          {
+            id: "gmp_fds",
+            swimlane: "gmp_specs",
+            phase: "Phase 2: Design, Risk & Vendor",
+            title: "Functional / Design Spec (FS/DS)",
+            colStart: 4,
+            colSpan: 2,
+            mode: "Sequential Gate",
+            gampCategories: [4, 5],
+            leadActor: "IT",
+            supportActors: ["User", "CSV"],
+            predecessors: ["gmp_urs", "gmp_cc"],
+            successors: ["gmp_dq", "gmp_fra", "gmp_dev", "gmp_oq"],
+            keywords: ["fds", "fs", "ds", "functional design", "technical design", "architecture", "erd", "audit trail", "rbac", "security", "backup", "git", "api", "iso 27001"],
+            softGate: "IT can begin drafting FS/DS wireframes & architecture once URS Draft stabilizes.",
+            entryGate: "Approved URS & Approved Change Control (CC).",
+            exitGate: "Approved FS/DS mapped 1-to-1 back to URS IDs, unlocking DQ Report execution & OQ scripting.",
+            watchout: "Every mandatory `URS-xxx` requirement must map to an `FDS-xxx` ID. FDS records the document version and target release (e.g., Release 1.0); exact build tags are logged in Code Review & IQ.",
+            checklist: [
+              { text: "Functional Design: wireframes, field validations, error codes, state flow & formulas", example: "e.g., \"FDS-FUNC-001 (→ URS-FUNC-001): `actual_temp` DECIMAL(5,2) required; invalid entry shows `ERR-01`; PASS if 98.00 ≤ temp ≤ 102.00.\"" },
+              { text: "Technical Architecture: tech stack, ERD/schema, topology (Stg/Prod) & NTP sync", example: "e.g., \"React + .NET 8 REST API + PostgreSQL 15 on isolated Server Q & P; time synced to `ntp.corp.local`; AD/LDAP SSO.\"" },
+              { text: "Audit Trail technical design (immutable tables, DB triggers, viewer & export)", example: "e.g., \"DB trigger logs INSERT/UPDATE on `work_orders` into `audit_trails`; `app_db_user` has INSERT/SELECT only (no UPDATE/DELETE).\"" },
+              { text: "Security & RBAC technical matrix, TLS/AES encryption & session/lockout rules", example: "e.g., \"CRUD permission matrix per role; TLS 1.3 in transit, AES-256 at rest; 15 min idle timeout; lock after 5 failed logins.\"" },
+              { text: "Backup & Restore design (automated DB dump + Git app repo + offsite vault)", example: "e.g., \"Nightly GPG-encrypted `pg_dump` at 02:00 WIB to offsite DR NAS; app source backed up via Git release tags + VM snapshot.\"" },
+              { text: "Interface/API payload schema, retry queue, idempotency & URS-to-FDS mapping", example: "e.g., \"POST `/api/v1/sync-assets` JSON schema, OAuth2 token, unique key duplicate-check, 3x retry + failure email alert.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.5, 5, 6, 7.2, 9, 12)", "21 CFR Part 11 (11.10)"],
+            isoStandards: ["ISO/IEC 12207", "ISO/IEC 27001 (A.8.5, A.8.13, A.8.15, A.8.24)"]
+          },
+          {
+            id: "gmp_dq",
+            swimlane: "gmp_build",
+            phase: "Phase 2: Design, Risk & Vendor",
+            title: "Design Qualification (DQ)",
+            colStart: 5,
+            colSpan: 2,
+            mode: "Sequential Gate",
+            gampCategories: [4, 5],
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: ["gmp_vp", "gmp_urs", "gmp_fds"],
+            successors: ["gmp_fra", "gmp_dev", "gmp_iq_stg"],
+            keywords: ["dq", "design qualification", "protocol", "report", "verification"],
+            softGate: "DQ Protocol can be drafted & routed for review in parallel while FS/DS is finalized.",
+            entryGate: "Approved URS, Approved FS/DS, Approved VP, and Pre-Approved DQ Protocol.",
+            exitGate: "Approved DQ Report proving 100% of URS requirements are covered by a compliant design.",
+            watchout: "Strict GxP rule: DQ Protocol MUST be signed/approved BEFORE executing the DQ checklist and generating the DQ Report.",
+            checklist: [
+              { text: "DQ Protocol formally approved prior to execution", example: "e.g., \"DQP-ePM-001 signed by Process Owner, IT Architect, and CSV on 2026-04-10.\"" },
+              { text: "100% URS-to-FS/DS coverage verification check passed", example: "e.g., \"Verified all 42 mandatory URS items map cleanly to FDS sections with zero gaps.\"" },
+              { text: "Architecture, Audit Trail, Security & Backup design compliance verified", example: "e.g., \"Confirmed immutable audit table, NTP sync, TLS 1.3, and automated offsite backup comply with Annex 11.\"" },
+              { text: "DQ Report compiled with objective evidence & final QA sign-off", example: "e.g., \"DQR-ePM-001 passed (0 open deviations) and approved by QA/CSV.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4)", "EU GMP Annex 15"],
+            isoStandards: ["ISO 9001 (Sec 8.3.4)", "ISO/IEC 29148"]
+          },
+          {
+            id: "gmp_fra",
+            swimlane: "gmp_specs",
+            phase: "Phase 2: Design, Risk & Vendor",
+            title: "Functional Risk Assessment (FRA)",
+            colStart: 6,
+            colSpan: 2,
+            mode: "Sequential Gate",
+            gampCategories: [3, 4, 5],
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: ["gmp_vp", "gmp_fds", "gmp_dq"],
+            successors: ["gmp_oq", "gmp_pq", "gmp_rtm"],
+            keywords: ["fra", "fmea", "risk assessment", "mitigation", "rpn", "testing strategy"],
+            softGate: "Drafting FMEA rows can start once FS/DS functions are listed; finalized right alongside DQ Report.",
+            entryGate: "Approved URS, FS/DS, and DQ alignment.",
+            exitGate: "Approved FRA assigning High/Medium/Low risk scores that directly dictate OQ/PQ test depth.",
+            watchout: "FRA must be approved BEFORE OQ Protocol Approval—otherwise your risk-based testing rationale cannot justify OQ test depth.",
+            checklist: [
+              { text: "FMEA scoring methodology defined (Severity × Occurrence × Detectability)", example: "e.g., \"3×3 matrix: High Severity (Patient/Batch Impact) + Medium Occurrence → High Risk Class.\"" },
+              { text: "Function-by-function failure mode & GxP impact assessed per URS/FDS ID", example: "e.g., \"FRA-012 (URS-INT-001): Middleware drops Work Order → Missed GMP calibration → Initial Risk: HIGH.\"" },
+              { text: "Technical & procedural mitigations reduce residual risk to acceptable level", example: "e.g., \"Technical: Auto-retry + admin alert; Procedural: Daily sync check SOP → Residual Risk: LOW.\"" },
+              { text: "Risk-based testing strategy mapped directly to OQ / PQ", example: "e.g., \"High Risk = Positive + Negative + Boundary + Error testing in OQ & PQ; Low Risk = Standard check.\"" }
+            ],
+            gxpStandards: ["ICH Q9", "CPOB Annex 11 (Sec 1)", "GAMP 5"],
+            isoStandards: ["ISO 31000", "ISO/IEC 29119"]
+          },
+          {
+            id: "gmp_supplier",
+            swimlane: "gmp_gov",
+            phase: "Phase 2: Design, Risk & Vendor",
+            title: "Supplier Assessment",
+            colStart: 6,
+            colSpan: 2,
+            mode: "Parallel Track",
+            gampCategories: [4, 5],
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: ["gmp_vp"],
+            successors: ["gmp_oq", "gmp_release"],
+            keywords: ["supplier assessment", "vendor", "leverage", "internal it", "audit", "sla", "iso 9001", "iso 27001"],
+            softGate: "Check first if a valid Qualified Supplier Assessment already exists for this vendor/Internal IT before creating a new one!",
+            entryGate: "Approved Validation Plan identifying external software vendor or Internal Corporate IT.",
+            exitGate: "Valid Supplier Assessment (new or leveraged existing document) confirming vendor quality maturity & SLA.",
+            watchout: "1× Leverage Rule: Supplier Assessment is performed at the Vendor / Internal IT level—NOT repeated for every app! If Internal IT is already Qualified (e.g., SA-IT-2025-001, valid 2–3 yrs), simply cite it in VP & VSR.",
+            checklist: [
+              { text: "Check for existing valid Supplier Assessment (Leverage if already Qualified)", example: "e.g., \"Leveraged existing Qualified Internal IT Assessment `SA-IT-2025-001` (valid until Dec 2027) — no duplicate assessment required.\"" },
+              { text: "Vendor QMS maturity & certifications verified (ISO 9001 / ISO 27001) [New Vendor]", example: "e.g., \"Collected valid ISO 9001:2015 & ISO 27001:2022 certificates plus completed CSV Vendor Questionnaire.\"" },
+              { text: "Software development, Git version control & patch practices reviewed [New Vendor]", example: "e.g., \"Confirmed vendor uses controlled Git repositories, independent code reviews, and documented release notes.\"" },
+              { text: "Service Level Agreement (SLA), NDA & QA/CSV qualification conclusion signed", example: "e.g., \"Signed SLA guaranteeing 4-hour P1 incident response; Supplier rated 'Qualified — Low Risk' by CSV.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 3)", "GAMP 5"],
+            isoStandards: ["ISO 9001 (Sec 8.4)", "ISO/IEC 27001 (A.5.19)"]
+          },
+          {
+            id: "gmp_dev",
+            swimlane: "gmp_build",
+            phase: "Phase 3: Build & Staging (IQ / OQ)",
+            title: "Development & Source Code Review",
+            colStart: 7,
+            colSpan: 2,
+            mode: "Parallel Track",
+            gampCategories: [5],
+            tracksAppVersion: true,
+            versionNote: "Records exact Git repository, branch, Commit SHA, and frozen release candidate tag (e.g., v1.0.0-rc1).",
+            leadActor: "IT",
+            supportActors: ["CSV"],
+            predecessors: ["gmp_fds", "gmp_dq"],
+            successors: ["gmp_iq_stg", "gmp_oq"],
+            keywords: ["development", "source code review", "coding", "git", "version", "owasp", "sonarqube", "cat 5", "bug fix", "security"],
+            softGate: "Initial prototyping can run during FS/DS; formal Source Code Review runs once code freezes for Staging.",
+            entryGate: "Approved FS/DS & Approved DQ Report (for formal code review sign-off).",
+            exitGate: "Signed Source Code Review Report (by independent Senior Dev + CSV) & frozen Git tag deployed to Staging.",
+            watchout: "Mandatory specifically for GAMP Cat 5 (Custom Apps). Reviewer must be an independent Senior Developer (not the original author) verifying OWASP security and unbypassable GxP logic.",
+            checklist: [
+              { text: "Version control identity recorded (Git Repo, Branch, Commit SHA & Tag)", example: "e.g., \"Reviewed repo `gitlab.corp/epm-web`, Tag `v1.0.0-rc1`, Commit SHA `a84f92c`.\"" },
+              { text: "OWASP Security check (no hardcoded secrets, parameterized SQL, backend auth)", example: "e.g., \"0 hardcoded credentials; all DB queries use ORM/parameterized SQL; role authorization enforced in Backend API.\"" },
+              { text: "GxP critical calculations, Segregation of Duties & Audit Trail verified in code", example: "e.g., \"Verified `ApprovalService.cs` line 88 blocks self-approval (`CreatedBy == currentUser`) and audit trigger cannot be bypassed.\"" },
+              { text: "Coding standards, exception handling & static analysis (SonarQube) approved", example: "e.g., \"SonarQube passed with 0 Blocker/Critical vulnerabilities; SCR-ePM-001 signed by independent Senior Dev & CSV.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.5)", "GAMP 5"],
+            isoStandards: ["ISO/IEC 12207", "ISO/IEC 27001 (A.8.25)"]
+          },
+          {
+            id: "gmp_iq_stg",
+            swimlane: "gmp_qual",
+            phase: "Phase 2: Design, Risk & Vendor",
+            title: "IQ (Staging — Server Q)",
+            colStart: 7,
+            colSpan: 1,
+            mode: "Sequential Gate",
+            gampCategories: [1, 3, 4, 5],
+            tracksAppVersion: true,
+            hasBackupGuideLink: true,
+            versionNote: "Records exact installed Staging build tag (e.g., v1.0.0-rc1) deployed from Git.",
+            leadActor: "User",
+            supportActors: ["IT", "CSV"],
+            predecessors: ["gmp_dq", "gmp_dev"],
+            successors: ["gmp_oq"],
+            keywords: ["iq", "installation qualification", "staging", "server q", "database server", "client", "tablet", "pc", "procedural installation", "version", "ntp", "ssl", "backup", "firewall", "iso 27001"],
+            softGate: "IQ Protocol can be drafted in parallel with FS/DS and approved before Staging deployment.",
+            entryGate: "Approved DQ Report (Cat 4/5), Frozen Staging Build & Pre-Approved IQ Protocol.",
+            exitGate: "Approved IQ Staging Report confirming Server Q app/DB, minimum client specs & backup job config.",
+            watchout: "Backup Config ONLY—do NOT run a DB Restore test in IQ (save Restore for OQ). For Clients (PC/Tablet), do NOT IQ 100 tablets individually; verify 1 representative device against Minimum Client Spec.",
+            checklist: [
+              { text: "Application Server specs (OS, CPU, RAM, Disk, Runtime) & Build Version verified", example: "e.g., \"APP-STG-01: Ubuntu 22.04 LTS, 8 vCPU, 16GB RAM, .NET 8.0.4, Git Tag `v1.0.0-rc1` (terminal screenshots attached).\"" },
+              { text: "Database Server specs (Engine/Version, Schema & immutable audit table rights)", example: "e.g., \"DB-STG-01: PostgreSQL 15.4; `\\dp audit_trails` confirms `app_user` has NO UPDATE/DELETE privileges.\"" },
+              { text: "Minimum Client Specification verified on 1 representative PC / Tablet", example: "e.g., \"Verified on 1 Android 12 Tablet (1280×800) & 1 Windows 11 PC (Chrome v120+): login & pages render cleanly.\"" },
+              { text: "Procedural Installation executed (Git deploy, SSL/TLS, Firewall, NTP & Env Isolation)", example: "e.g., \"8-step IT Install Guide passed (proving Git app rebuild); TLS 1.3 valid; NTP drift <0.1s; Staging isolated from Prod.\"" },
+              { text: "Automated DB Backup Job configured & first dump > 0 KB verified (No Restore test)", example: "e.g., \"Cron backup active; first Staging DB dump file created (42 MB, non-corrupt). Restore simulation deferred to OQ.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.6, 7.2, 9, 12)", "EU GMP Annex 15"],
+            isoStandards: ["ISO/IEC 27001 (A.8.13, A.8.20, A.8.24, A.8.31)"]
+          },
+          {
+            id: "gmp_oq",
+            swimlane: "gmp_qual",
+            phase: "Phase 3: Build & Staging (IQ / OQ)",
+            title: "OQ (Staging — Server Q)",
+            colStart: 8,
+            colSpan: 2,
+            mode: "Sequential Gate",
+            gampCategories: [1, 3, 4, 5],
+            hasOptionalModules: true,
+            tracksAppVersion: true,
+            hasBackupGuideLink: true,
+            versionNote: "Records tested version (e.g., v1.0.0-rc1) and re-tested fixed version (e.g., v1.0.0) if deviations occur.",
+            leadActor: "User",
+            supportActors: ["IT", "CSV"],
+            predecessors: ["gmp_iq_stg", "gmp_fra", "gmp_fds"],
+            successors: ["gmp_iq_prod", "gmp_pq", "gmp_rtm"],
+            keywords: ["oq", "operational qualification", "staging", "negative test", "audit trail", "security", "rbac", "backup", "restore", "rto", "rpo", "data verification", "alcoa", "iso 27001"],
+            softGate: "OQ Protocol scripting can start once FS/DS is approved, then finalized after FRA approval.",
+            entryGate: "Approved IQ Staging Report, Approved FRA, and Pre-Approved OQ Protocol.",
+            exitGate: "Approved OQ Report (with all critical/major deviations resolved) unlocking Production IQ & PQ.",
+            watchout: "Execute Database Backup & Restore 1× ONLY here in OQ Staging (no need to repeat in PQ, and no manual app rebuild needed since IQ proved Git deploy). Check 'Focused Add-Ons' for Data Verification or E-Sig.",
+            checklist: [
+              { text: "Positive functional workflow & calculation tests mapped to FDS/URS IDs", example: "e.g., \"TC-OQ-01: Entered temp 100.00°C → saved record and auto-flagged status PASS.\"" },
+              { text: "Negative & boundary tests (prioritized for High-Risk FRA functions)", example: "e.g., \"TC-OQ-05: Entered `ABC` and `-500` in temp field → blocked save with `ERR-01`.\"" },
+              { text: "Security, RBAC, Segregation of Duties, lockout & session timeout tests", example: "e.g., \"TC-OQ-10: Technician blocked from `/qa-approve` (HTTP 403); auto-logout confirmed after 15 min idle.\"" },
+              { text: "Audit Trail verification (Create/Edit/Delete + immutability check)", example: "e.g., \"TC-OQ-14: Edited calibration schedule with reason → Audit Trail logged User, NTP time, Old/New value & Reason; immutable.\"" },
+              { text: "1× Live Database Backup & Restore Execution (5-Step Evidence + RTO timing)", example: "e.g., \"TC-OQ-18: Pre-backup data+Audit Trail → DB Backup → Drop table → DB Restore in 18 min (RTO ≤ 4h) → 100% data & Audit Trail intact.\"" },
+              { text: "Deviations logged, bugs fixed, re-tested on updated tag & OQ Report approved", example: "e.g., \"DEV-OQ-01 (PDF date format) fixed in `v1.0.0`, re-tested PASS, OQR-001 signed by Process Owner & CSV.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.7, 6, 7.2, 9, 12, 13)", "21 CFR Part 11 (11.10)"],
+            isoStandards: ["ISO/IEC 29119", "ISO/IEC 27001 (A.8.5, A.8.13, A.8.15)", "ISO 22301"]
+          },
+          {
+            id: "gmp_uam",
+            swimlane: "gmp_release",
+            phase: "Phase 3: Build & Staging (IQ / OQ)",
+            title: "User Access Matrix (UAM)",
+            colStart: 8,
+            colSpan: 1,
+            mode: "Parallel Track",
+            gampCategories: [1, 3, 4, 5],
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: ["gmp_fds"],
+            successors: ["gmp_pq", "gmp_release"],
+            keywords: ["uam", "user access matrix", "security", "rbac", "roles", "sod", "permissions", "iso 27001"],
+            softGate: "Drafted during FS/DS and OQ Staging; finalized before Production user provisioning & PQ.",
+            entryGate: "Approved FS/DS technical role definitions.",
+            exitGate: "Approved UAM table governing exact Production user provisioning and verified during PQ.",
+            watchout: "Verify Segregation of Duties (SoD): IT System Admins must NEVER hold privileges to create, edit, or approve GxP manufacturing/QC records.",
+            checklist: [
+              { text: "All system roles & granular CRUD/Approve/Export permissions mapped", example: "e.g., \"Table mapping Operator, Supervisor, QA Reviewer, IT Admin across all 8 application modules.\"" },
+              { text: "Segregation of Duties (SoD) verified (IT Admin separated from GxP ops)", example: "e.g., \"Confirmed IT Admin can manage accounts/config only—cannot approve or delete GxP records.\"" },
+              { text: "Initial Go-Live Production user roster mapped to approved roles", example: "e.g., \"48 named employees across Plant A, B, C mapped with Department Manager & QA approval.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 12)", "21 CFR Part 11 (11.10(d), (g))"],
+            isoStandards: ["ISO/IEC 27001 (A.5.3, A.5.15, A.5.18)"]
+          },
+          {
+            id: "gmp_sop",
+            swimlane: "gmp_release",
+            phase: "Phase 4: Prod Qualification & Release",
+            title: "SOP & Training Records",
+            colStart: 9,
+            colSpan: 2,
+            mode: "Parallel Track",
+            gampCategories: [1, 3, 4, 5],
+            hasBackupGuideLink: true,
+            leadActor: "User",
+            supportActors: ["IT", "CSV"],
+            predecessors: ["gmp_fds", "gmp_oq"],
+            successors: ["gmp_pq", "gmp_release"],
+            keywords: ["sop", "training", "contingency", "bcp", "periodic review", "backup", "restore", "audit trail review", "incident", "change management", "admin", "iso 22301", "iso 27001"],
+            softGate: "Drafting SOPs starts in parallel during OQ Staging once screens are frozen so it never delays Go-Live.",
+            entryGate: "Frozen UI & workflows verified in OQ Staging.",
+            exitGate: "Approved, effective 6-pillar SOP suite + signed User & Admin Training Records prior to PQ & Release.",
+            watchout: "SOP is NOT just a user click-guide! Must cover all 6 GxP pillars: Operational Flow, Contingency/BCP, User Access/Admin, Backup/Restore, Audit Trail & Periodic Review (with Risk-Based Restore schedule), and Incident/Change.",
+            checklist: [
+              { text: "1. User Operational Flow SOP (daily role steps, ALCOA+ entry & error handling)", example: "e.g., \"SOP-ENG-045: Step-by-step Technician calibration entry, certificate upload & FAIL escalation.\"" },
+              { text: "2. Contingency / Business Continuity Plan (BCP) SOP (downtime & transcription rule)", example: "e.g., \"If down >1 hr, use controlled paper Form `FRM-ENG-09`; transcribe within 24h after recovery with reason & scan attached.\"" },
+              { text: "3. User Access & System Admin SOP (request, modify, 24h disable on resignation)", example: "e.g., \"HR notifies IT by H+1 on resignation; IT disables account within 24h (never hard-delete so Audit Trail stays intact).\"" },
+              { text: "4. Backup, Restore & DR SOP (daily monitoring + Cross-Env Restore Drill)", example: "e.g., \"Daily backup alert check (2h escalation on fail) + Cross-Env DB Restore (Prod backup → isolated Staging/DR sandbox).\"" },
+              { text: "5. Audit Trail Review & Periodic Review SOP (IT + CSV Risk-Based Restore Schedule)", example: "e.g., \"Monthly QA audit trail review + annual Periodic Review (Critical apps: 1×/yr DB restore drill; Med/Low: rotating DB cluster sampling).\"" },
+              { text: "6. Incident & Change Management SOP + Signed User & Admin Training Records", example: "e.g., \"GxP bugs logged as Deviation/CC before Prod deploy; signed attendance & competency records for all 48 users prior to Go-Live.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 2, 7.2, 9, 10, 11, 12.3, 13, 16)"],
+            isoStandards: ["ISO 9001 (Sec 7.5)", "ISO/IEC 27001 (A.5.18, A.8.13)", "ISO 22301"]
+          },
+          {
+            id: "gmp_iq_prod",
+            swimlane: "gmp_qual",
+            phase: "Phase 4: Prod Qualification & Release",
+            title: "IQ (Production — Server P)",
+            colStart: 10,
+            colSpan: 1,
+            mode: "Sequential Gate",
+            gampCategories: [1, 3, 4, 5],
+            tracksAppVersion: true,
+            hasBackupGuideLink: true,
+            versionNote: "Verifies exact validated Production build tag (e.g., v1.0.0) matches Staging OQ.",
+            leadActor: "User",
+            supportActors: ["IT", "CSV"],
+            predecessors: ["gmp_oq"],
+            successors: ["gmp_pq"],
+            keywords: ["iq", "installation qualification", "production", "server p", "version", "client", "tablet", "backup", "ssl", "ntp", "iso 27001"],
+            softGate: "Production IQ Protocol can be drafted alongside Staging IQ, but NEVER executed until OQ Staging finishes.",
+            entryGate: "Approved OQ Staging Report (all critical bugs fixed) & Final Validated Production Build Tag.",
+            exitGate: "Approved IQ Production Report verifying Server P matches validated Staging and is ready for PQ.",
+            watchout: "NEVER run a destructive DB Restore test on Production Server P (ISO 27001 A.8.31)! Only verify the Production backup job is active & produces a valid encrypted dump (> 0 KB).",
+            checklist: [
+              { text: "Prod App & DB Server specs + exact validated release tag (`v1.0.0`) verified", example: "e.g., \"APP-PROD-01 & DB-PROD-01 specs match FDS; deployed Git Tag `v1.0.0` checksum identical to validated OQ Staging.\"" },
+              { text: "Procedural Installation, Prod SSL/TLS cert, Firewall & NTP sync verified", example: "e.g., \"IT Install Guide passed; valid corporate SSL cert installed; NTP drift < 50ms on Server P.\"" },
+              { text: "Minimum Client Spec confirmed on Production network (1 representative PC/Tablet)", example: "e.g., \"Verified 1 shop-floor Android Tablet & 1 QA PC connect cleanly to Production HTTPS URL.\"" },
+              { text: "Prod automated DB backup job & offsite DR replication active (No Restore test)", example: "e.g., \"First automated Production DB dump completed (45 MB, encrypted, replicated to DR vault). Restore leveraged from OQ.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.6, 7.2, 9, 12)", "EU GMP Annex 15"],
+            isoStandards: ["ISO/IEC 27001 (A.8.13, A.8.20, A.8.31)"]
+          },
+          {
+            id: "gmp_pq",
+            swimlane: "gmp_qual",
+            phase: "Phase 4: Prod Qualification & Release",
+            title: "PQ (Production — Server P)",
+            colStart: 11,
+            colSpan: 1,
+            mode: "Sequential Gate",
+            gampCategories: [4, 5],
+            hasOptionalModules: true,
+            tracksAppVersion: true,
+            hasBackupGuideLink: true,
+            versionNote: "Records validated Production version (e.g., v1.0.0) under live business execution.",
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: ["gmp_iq_prod", "gmp_oq", "gmp_uam", "gmp_sop"],
+            successors: ["gmp_rtm", "gmp_release"],
+            keywords: ["pq", "performance qualification", "production", "uat", "end to end", "uam", "data verification", "security"],
+            softGate: "PQ Protocol can be drafted during OQ Staging based on URS workflows and pre-approved before Prod IQ completes.",
+            entryGate: "Approved IQ Production Report, Approved OQ Report, Approved SOPs (users trained), Approved UAM & Pre-Approved PQ Protocol.",
+            exitGate: "Approved PQ Report proving trained end-users can safely operate the live Production system.",
+            watchout: "Do NOT repeat negative testing or Backup/Restore tests here (leverage OQ Staging!). PQ is strictly real-world end-to-end workflows executed by trained end-users in Production.",
+            checklist: [
+              { text: "End-to-end real-world business scenarios executed by trained end-users (not IT)", example: "e.g., \"TC-PQ-01: Planner creates schedule → Technician executes on Tablet → Supervisor reviews → QA approves in Prod.\"" },
+              { text: "Live Production user accounts verified 100% against approved UAM (0 dummy users)", example: "e.g., \"TC-PQ-03: Audited all 48 live Prod accounts vs. UAM v1.0; 100% role match and 0 test accounts remaining.\"" },
+              { text: "Live integrations, PDF reports & physical printouts verified (ALCOA+)", example: "e.g., \"TC-PQ-04: Synced 10 real ERP assets; exported PDF shows accurate data, NTP timestamp & clear e-signature.\"" },
+              { text: "Multi-user concurrency/response time acceptable & PQ Report signed by CSV", example: "e.g., \"TC-PQ-05: 15 concurrent users averaged 1.2s response (target ≤ 3s); PQR-001 approved by Process Owner & CSV.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.8, 5, 8, 12)", "EU GMP Annex 15"],
+            isoStandards: ["ISO/IEC 29119", "ISO/IEC 25010"]
+          },
+          {
+            id: "gmp_rtm",
+            swimlane: "gmp_release",
+            phase: "Phase 4: Prod Qualification & Release",
+            title: "Traceability Matrix (RTM)",
+            colStart: 11,
+            colSpan: 1,
+            mode: "Sequential Gate",
+            gampCategories: [3, 4, 5],
+            leadActor: "User",
+            supportActors: ["CSV", "IT"],
+            predecessors: ["gmp_fra", "gmp_oq", "gmp_pq"],
+            successors: ["gmp_release"],
+            keywords: ["rtm", "trm", "traceability matrix", "urs", "fds", "fra", "test case", "coverage"],
+            softGate: "Built incrementally from URS → FDS → FRA → DQ/IQ/OQ/PQ; locked immediately once PQ passes.",
+            entryGate: "All Qualification Reports (DQ, IQ, OQ, PQ) executed.",
+            exitGate: "Approved RTM proving 100% bidirectional traceability with zero orphaned requirements.",
+            watchout: "Auditors love sampling random URS IDs and tracing them through FDS → FRA → OQ/PQ. Never leave any mandatory URS row unmapped!",
+            checklist: [
+              { text: "Bidirectional mapping: URS-ID ↔ FDS-ID ↔ FRA-ID (Risk) ↔ DQ/IQ/OQ/PQ Test ID", example: "e.g., \"URS-AT-001 | FDS-AT-001 | FRA-009 (High) | DQ-12, TC-OQ-14 | PASS | DQR-001 p.8; OQR-001 p.34.\"" },
+              { text: "100% Pass status verified with exact approved report numbers & page refs", example: "e.g., \"All 42/42 mandatory URS requirements trace cleanly to Passed test evidence.\"" },
+              { text: "All deviations/re-tests cross-referenced & RTM approved by Process Owner & CSV", example: "e.g., \"DEV-OQ-01 linked to TC-OQ-04 re-test PASS; RTM-001 signed off with 0 unmapped rows.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4.4)", "GAMP 5"],
+            isoStandards: ["ISO/IEC 29148", "ISO/IEC 29119"]
+          },
+          {
+            id: "gmp_release",
+            swimlane: "gmp_release",
+            phase: "Phase 4: Prod Qualification & Release",
+            title: "System Release Note & VSR",
+            colStart: 12,
+            colSpan: 1,
+            mode: "Sequential Gate",
+            gampCategories: [1, 3, 4, 5],
+            tracksAppVersion: true,
+            versionNote: "Declares the Final Validated Release Version (e.g., v1.0.0) authorized for routine GxP Go-Live.",
+            leadActor: "CSV",
+            supportActors: ["User", "IT"],
+            predecessors: ["gmp_rtm", "gmp_pq", "gmp_sop", "gmp_uam", "gmp_supplier"],
+            successors: [],
+            keywords: ["release note", "vsr", "validation summary report", "version", "go live", "closure", "change control", "support"],
+            softGate: "Drafting deliverable inventory can begin during PQ, but approval MUST wait until ALL reports & SOPs are signed.",
+            entryGate: "Approved RTM, Approved PQ/OQ/IQ/DQ Reports, Approved SOPs & Training, Approved UAM.",
+            exitGate: "Signed VSR & System Release Note + Change Control Closure authorizing routine GxP Go-Live.",
+            watchout: "Final Go-Live gate! Combines VSR (validation summary & formal declaration) and Release Note (Go-Live authorization, version tag & CC closure). Zero GxP production usage allowed before QA signs.",
+            checklist: [
+              { text: "[VSR] Master inventory of all approved validation docs, doc numbers & dates", example: "e.g., \"Table listing approved URS, IRA, CC, VP, FDS, DQ, FRA, SA-IT-2025-001 (leveraged), SCR, IQ, OQ, PQ, RTM, SOPs.\"" },
+              { text: "[VSR] Deviations & CAPA summary (0 Critical/Major open) + Formal Validation Statement", example: "e.g., \"2 Minor deviations closed, 0 Critical/Major open; declares 'ePM v1.0.0 is VALIDATED & fit for GxP use'.\"" },
+              { text: "[Release Note] Final App Version (`v1.0.0`), Go-Live date, sites & L1/L2 support contacts", example: "e.g., \"Release `v1.0.0` Go-Live 01 Jul 2026 across 3 sites; L1 Support: IT Helpdesk ext. 4400; Periodic Review due Jul 2027.\"" },
+              { text: "[Release Note] QA/CSV Go-Live sign-off & initial Change Control (CC) Closure", example: "e.g., \"Signed by Process Owner, IT Lead & QA Head; CC-2026-042 formally closed for routine GxP operation.\"" }
+            ],
+            gxpStandards: ["CPOB Annex 11 (Sec 4, 10, 13)", "EU GMP Annex 15"],
+            isoStandards: ["ISO 9001 (Sec 8.5.6, 10.2)", "ISO/IEC 12207", "ISO/IEC 20000"]
+          }
+        ]
+      },
+
+      /**
+       * ======================================================================
+       * NON-GMP LIFECYCLE — 3 Mandatory Core Deliverables (URS, IRA, UAT)
+       * + Site-Optional / Recommended Engineering Steps
+       * 8 Columns across 3 Workstream Swimlanes
+       * ======================================================================
+       */
+      nonGmp: {
+        phases: [
+          { title: "Stage 1", subtitle: "Initiation & Specs", span: 3, color: "text-blue-600" },
+          { title: "Stage 2", subtitle: "Build & Testing (SIT / UAT)", span: 3, color: "text-amber-600" },
+          { title: "Stage 3", subtitle: "Readiness & Go-Live", span: 2, color: "text-emerald-600" }
+        ],
+        swimlanes: [
+          { id: "ng_business", title: "1. Business & UAT", subtitle: "Charter, URS, UAT & Guide", accent: "bg-indigo-500" },
+          { id: "ng_tech", title: "2. IT Engineering & Ops", subtitle: "FDS, Build, SIT & Release", accent: "bg-amber-500" },
+          { id: "ng_qa", title: "3. Governance Check", subtitle: "IRA (Non-GMP Screening)", accent: "bg-emerald-500" }
+        ],
+        tasks: [
+          {
+            id: "ng_cr",
+            swimlane: "ng_business",
+            phase: "Stage 1: Initiation & Specs",
+            title: "Change Request / Project Charter",
+            colStart: 1,
+            colSpan: 1,
+            mode: "Site-Optional",
+            requirementLevel: "optional",
+            leadActor: "User",
+            supportActors: ["IT"],
+            predecessors: [],
+            successors: ["ng_urs", "ng_ira"],
+            keywords: ["change request", "charter", "initiation", "non-gmp", "optional"],
+            entryGate: "Business problem or automation opportunity identified.",
+            exitGate: "Approved Change Request / Project Charter authorizing development (if required by site).",
+            watchout: "Site-Optional: Requirement depends on your specific site's IT governance policy. Core mandatory Non-GMP deliverables across all sites are URS, IRA, and UAT.",
+            checklist: [
+              { text: "Business objective, scope & expected ROI defined", example: "e.g., \"Automate internal canteen & shuttle booking portal to save 10 hrs/week of HR admin time.\"" },
+              { text: "Target timeline and key stakeholders listed", example: "e.g., \"Sponsor: HR Manager | IT Lead: App Dev Lead | Target Go-Live: Q3 2026.\"" },
+              { text: "Department head approval obtained", example: "e.g., \"CR-2026-088 approved via IT Service Portal.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO 9001"]
+          },
+          {
+            id: "ng_ira",
+            swimlane: "ng_qa",
+            phase: "Stage 1: Initiation & Specs",
+            title: "Initial Risk Assessment (IRA)",
+            colStart: 1,
+            colSpan: 1,
+            mode: "Mandatory (All Sites)",
+            requirementLevel: "mandatory",
+            leadActor: "User",
+            supportActors: ["CSV"],
+            predecessors: [],
+            successors: ["ng_urs"],
+            keywords: ["ira", "initial risk assessment", "gxp check", "non-gmp", "mandatory", "screening"],
+            entryGate: "URS Draft or initial project scope available for GxP screening.",
+            exitGate: "Signed IRA confirming NO GxP impact (formally exempting system from IQ/OQ/PQ).",
+            watchout: "Mandatory across ALL sites: Always document this IRA screening with CSV sign-off so future auditors see objective proof why full GMP qualification was not performed.",
+            checklist: [
+              { text: "Confirm system does NOT impact product quality, patient safety, or batch records", example: "e.g., \"System handles HR/General Admin data only; zero interface to ERP batch/QC modules.\"" },
+              { text: "Confirm 21 CFR Part 11 / CPOB Annex 11 do not apply", example: "e.g., \"No regulatory electronic signatures or GxP audit trails required.\"" },
+              { text: "Process Owner & CSV sign-off recorded on IRA form", example: "e.g., \"IRA-NG-012 signed by Process Owner & CSV Specialist confirming Non-GMP status.\"" }
+            ],
+            gxpStandards: ["ICH Q9", "Company SDLC Policy"],
+            isoStandards: ["ISO 31000"]
+          },
+          {
+            id: "ng_urs",
+            swimlane: "ng_business",
+            phase: "Stage 1: Initiation & Specs",
+            title: "URS (User Requirement Spec)",
+            colStart: 2,
+            colSpan: 1,
+            mode: "Mandatory (All Sites)",
+            requirementLevel: "mandatory",
+            leadActor: "User",
+            supportActors: ["IT"],
+            predecessors: ["ng_cr", "ng_ira"],
+            successors: ["ng_fds", "ng_uat"],
+            keywords: ["urs", "user requirement", "brd", "mandatory", "user story", "iso 29148"],
+            entryGate: "Project scope agreed & IRA confirming Non-GMP classification.",
+            exitGate: "Approved URS defining business features, roles, and UAT acceptance baseline.",
+            watchout: "Mandatory across ALL sites: Even for Non-GMP apps, a clear URS aligns User & IT expectations and serves as the direct checklist for UAT.",
+            checklist: [
+              { text: "Core business workflows & functional requirements listed", example: "e.g., \"URS-01: Employee can book a shuttle seat up to 1 hour before departure and receive email confirmation.\"" },
+              { text: "User roles & basic access permissions defined", example: "e.g., \"Employee (book/cancel own), Admin (manage routes & export monthly attendance).\"" },
+              { text: "URS signed off by Process Owner / Business User", example: "e.g., \"URS v1.0 approved by HR Operations Lead.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO/IEC 29148"]
+          },
+          {
+            id: "ng_fds",
+            swimlane: "ng_tech",
+            phase: "Stage 1: Initiation & Specs",
+            title: "Functional Design Spec (FDS)",
+            colStart: 3,
+            colSpan: 1,
+            mode: "Site-Optional",
+            requirementLevel: "optional",
+            leadActor: "IT",
+            supportActors: ["User"],
+            predecessors: ["ng_urs"],
+            successors: ["ng_dev", "ng_sit"],
+            keywords: ["fds", "technical design", "api", "security", "optional", "iso 12207", "iso 27001"],
+            entryGate: "Approved URS.",
+            exitGate: "Technical design & database/API blueprint ready for development (where required by site).",
+            watchout: "Site-Optional: Some sites require FDS for complex Non-GMP apps while smaller tools skip straight from URS to Build. Always apply corporate IT security baselines (SSO, HTTPS, backup).",
+            checklist: [
+              { text: "Database schema, UI wireframes & API contracts defined", example: "e.g., \"ERD for `bookings` & `routes` tables + REST endpoint `/api/v1/bookings`.\"" },
+              { text: "Standard IT security (SSO/HTTPS) & backup schedule included", example: "e.g., \"Corporate Azure AD SSO login, HTTPS enforced, standard nightly VM snapshot.\"" },
+              { text: "Reviewed by IT Architect / Tech Lead", example: "e.g., \"FDS v1.0 approved in Git/Confluence.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO/IEC 12207", "ISO/IEC 27001"]
+          },
+          {
+            id: "ng_dev",
+            swimlane: "ng_tech",
+            phase: "Stage 2: Build & Testing (SIT / UAT)",
+            title: "Development & Build",
+            colStart: 4,
+            colSpan: 1,
+            mode: "Site-Optional",
+            requirementLevel: "optional",
+            leadActor: "IT",
+            supportActors: [],
+            predecessors: ["ng_fds"],
+            successors: ["ng_sit"],
+            keywords: ["development", "coding", "build", "iso 12207"],
+            entryGate: "Approved URS (and FDS if applicable).",
+            exitGate: "Feature-complete build deployed to Staging/Test environment.",
+            watchout: "Standard IT engineering phase (documentation formality varies by site). Maintain clean Git version tags and environment variables.",
+            checklist: [
+              { text: "All URS functional items implemented", example: "e.g., \"Booking calendar, email confirmation & Admin CSV export completed.\"" },
+              { text: "Code peer-reviewed and merged to staging branch", example: "e.g., \"Pull requests approved and merged to `release/v1.0`.\"" },
+              { text: "Deployed to Staging environment for testing", example: "e.g., \"Build v1.0.0 live on staging-portal.company.local.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO/IEC 12207"]
+          },
+          {
+            id: "ng_sit",
+            swimlane: "ng_tech",
+            phase: "Stage 2: Build & Testing (SIT / UAT)",
+            title: "System Integration Test (SIT)",
+            colStart: 5,
+            colSpan: 1,
+            mode: "Site-Optional",
+            requirementLevel: "optional",
+            leadActor: "IT",
+            supportActors: [],
+            predecessors: ["ng_dev"],
+            successors: ["ng_uat"],
+            keywords: ["sit", "integration test", "testing", "optional", "iso 29119"],
+            entryGate: "Staging build deployed.",
+            exitGate: "SIT passed with zero blocker bugs, unlocking Business UAT.",
+            watchout: "Site-Optional: Recommended for IT to verify technical integrations and permissions internally before inviting business users to UAT.",
+            checklist: [
+              { text: "Functional & API integration test cases passed", example: "e.g., \"Verified SSO login, booking creation & SMTP email alert work end-to-end.\"" },
+              { text: "Role permissions & basic negative inputs verified", example: "e.g., \"Confirmed regular employee cannot access `/admin` route.\"" },
+              { text: "Critical/High defects resolved prior to UAT", example: "e.g., \"All P1/P2 bugs closed in Jira.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO/IEC 29119"]
+          },
+          {
+            id: "ng_uat",
+            swimlane: "ng_business",
+            phase: "Stage 2: Build & Testing (SIT / UAT)",
+            title: "User Acceptance Test (UAT)",
+            colStart: 6,
+            colSpan: 1,
+            mode: "Mandatory (All Sites)",
+            requirementLevel: "mandatory",
+            leadActor: "User",
+            supportActors: ["IT"],
+            predecessors: ["ng_urs", "ng_sit"],
+            successors: ["ng_deploy", "ng_release"],
+            keywords: ["uat", "user acceptance test", "mandatory", "sign off", "iso 29119"],
+            entryGate: "URS approved & Staging build ready for business testing.",
+            exitGate: "Signed UAT Sign-Off Sheet confirming business acceptance for Production Go-Live.",
+            watchout: "Mandatory across ALL sites: Business users execute real scenarios against URS and sign the UAT acceptance sheet—no formal IQ/OQ/PQ needed.",
+            checklist: [
+              { text: "Business end-users execute core UAT scenarios mapped to URS", example: "e.g., \"3 HR coordinators & 5 employees tested booking, cancellation & monthly report export.\"" },
+              { text: "Any UAT feedback/bugs fixed and re-checked", example: "e.g., \"Adjusted Excel export date format per HR request and re-verified.\"" },
+              { text: "Formal UAT Sign-Off approved by Business Owner", example: "e.g., \"UAT Sign-Off Form signed by HR Manager.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO/IEC 29119"]
+          },
+          {
+            id: "ng_sop",
+            swimlane: "ng_business",
+            phase: "Stage 3: Readiness & Go-Live",
+            title: "User Guide / Quick SOP",
+            colStart: 7,
+            colSpan: 1,
+            mode: "Site-Optional",
+            requirementLevel: "optional",
+            leadActor: "User",
+            supportActors: ["IT"],
+            predecessors: ["ng_uat"],
+            successors: ["ng_release"],
+            keywords: ["user guide", "sop", "manual", "training", "optional"],
+            entryGate: "UI finalized during UAT.",
+            exitGate: "User manual / FAQ published for end-users (if required by site).",
+            watchout: "Site-Optional: A concise 2–3 page Quick Reference Guide with screenshots is usually sufficient for Non-GMP apps.",
+            checklist: [
+              { text: "Step-by-step User Guide with screenshots created", example: "e.g., \"2-page PDF guide showing how to log in, book a seat, and cancel.\"" },
+              { text: "IT L1/L2 support handover notes documented", example: "e.g., \"Runbook documenting service restart command and Admin contact.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO 9001"]
+          },
+          {
+            id: "ng_deploy",
+            swimlane: "ng_tech",
+            phase: "Stage 3: Readiness & Go-Live",
+            title: "Production Deployment",
+            colStart: 7,
+            colSpan: 1,
+            mode: "Site-Optional",
+            requirementLevel: "optional",
+            leadActor: "IT",
+            supportActors: [],
+            predecessors: ["ng_uat"],
+            successors: ["ng_release"],
+            keywords: ["deployment", "production", "go live", "backup", "iso 27001"],
+            entryGate: "Signed UAT Sign-Off & approved deployment window.",
+            exitGate: "Application live in Production with active backup & monitoring.",
+            watchout: "Formality varies by site, but IT should always verify Production DNS, SSL certificate, and automated daily backup before announcing Go-Live.",
+            checklist: [
+              { text: "Validated UAT build promoted to Production server", example: "e.g., \"Promoted tag v1.0.0 to prod-portal.company.com.\"" },
+              { text: "Production smoke test, SSL & backup job verified", example: "e.g., \"Verified login, DB write, valid HTTPS cert & backup schedule.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO/IEC 20000", "ISO/IEC 27001"]
+          },
+          {
+            id: "ng_release",
+            swimlane: "ng_tech",
+            phase: "Stage 3: Readiness & Go-Live",
+            title: "Release Note & Closure",
+            colStart: 8,
+            colSpan: 1,
+            mode: "Site-Optional",
+            requirementLevel: "optional",
+            leadActor: "IT",
+            supportActors: ["User"],
+            predecessors: ["ng_deploy", "ng_sop"],
+            successors: [],
+            keywords: ["release note", "closure", "go live", "optional"],
+            entryGate: "Production deployment & UAT complete.",
+            exitGate: "Release Note issued & project ticket closed (per site IT process).",
+            watchout: "Site-Optional: Recommended for communicating Go-Live announcement, version tag, and IT Helpdesk channel to all users.",
+            checklist: [
+              { text: "Release version, features & support contact published", example: "e.g., \"Release Note v1.0.0 sent to HR & IT Service Desk.\"" },
+              { text: "Change Request / project ticket closed", example: "e.g., \"CR-2026-088 marked Completed & Closed.\"" }
+            ],
+            gxpStandards: ["Company SDLC Policy"],
+            isoStandards: ["ISO/IEC 12207"]
+          }
+        ]
+      },
+
+      optionalProtocolAddOns: OPTIONAL_PROTOCOL_ADDONS
+    };
+
+    // ============================================================================
+    // Application State
+    // ============================================================================
+    let currentTheme = "light"; // "light" | "dark"
+    let currentMode = "gmp"; // "gmp" | "nonGmp"
+    let selectedGampCat = "all"; // "all" | "1" | "3" | "4" | "5"
+    let selectedNonGmpFilter = "all"; // "all" | "mandatory"
+    let selectedActor = null; // null | "User" | "CSV" | "IT"
+    let selectedTaskId = null;
+    let hoveredTaskId = null;
+    let searchQuery = "";
+    let activeProtocolTab = "core"; // "core" | "addons"
+    let activeStandardTag = null;
+    let expandedExamples = {};
+    let expandedAddOns = { addon_data_verification: true };
+    let checklistState = loadChecklistState();
+
+    // ============================================================================
+    // DOM References
+    // ============================================================================
+    const modeGmpBtn = document.getElementById("mode-gmp-btn");
+    const modeNonGmpBtn = document.getElementById("mode-nongmp-btn");
+    const searchInput = document.getElementById("search-input");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    const themeIconSun = document.getElementById("theme-icon-sun");
+    const themeIconMoon = document.getElementById("theme-icon-moon");
+    const themeToggleLabel = document.getElementById("theme-toggle-label");
+    const exportJsonBtn = document.getElementById("export-json-btn");
+    const gampFilterBar = document.getElementById("gamp-filter-bar");
+    const nonGmpFilterBar = document.getElementById("nongmp-filter-bar");
+    const gampInfoBtn = document.getElementById("gamp-info-btn");
+    const gampModal = document.getElementById("gamp-modal");
+    const gampModalBackdrop = document.getElementById("gamp-modal-backdrop");
+    const closeGampModalBtn = document.getElementById("close-gamp-modal-btn");
+    const gampModalOkBtn = document.getElementById("gamp-modal-ok-btn");
+    const backupGuideBtn = document.getElementById("backup-guide-btn");
+    const backupModal = document.getElementById("backup-modal");
+    const backupModalBackdrop = document.getElementById("backup-modal-backdrop");
+    const closeBackupModalBtn = document.getElementById("close-backup-modal-btn");
+    const backupModalOkBtn = document.getElementById("backup-modal-ok-btn");
+    const resetActorBtn = document.getElementById("reset-actor-btn");
+    const filterBanner = document.getElementById("filter-banner");
+    const filterBannerText = document.getElementById("filter-banner-text");
+    const clearAllFiltersBtn = document.getElementById("clear-all-filters-btn");
+    const timelineMinWidthWrapper = document.getElementById("timeline-minwidth-wrapper");
+    const phaseHeadersGrid = document.getElementById("phase-headers-grid");
+    const swimlanesContainer = document.getElementById("swimlanes-container");
+    const drawerBackdrop = document.getElementById("drawer-backdrop");
+    const inspectorDrawer = document.getElementById("inspector-drawer");
+    const closeDrawerBtn = document.getElementById("close-drawer-btn");
+    const drawerPhaseBadge = document.getElementById("drawer-phase-badge");
+    const drawerModeBadge = document.getElementById("drawer-mode-badge");
+    const drawerTitle = document.getElementById("drawer-title");
+    const drawerActorsRow = document.getElementById("drawer-actors-row");
+    const oqPqTabs = document.getElementById("oq-pq-tabs");
+    const drawerBody = document.getElementById("drawer-body");
+    const toastEl = document.getElementById("toast");
+    const toastMessageEl = document.getElementById("toast-message");
+
+    // ============================================================================
+    // Storage & Utility Helpers
+    // ============================================================================
+    function loadChecklistState() {
+      try {
+        const raw = localStorage.getItem(CHECKLIST_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (err) {
+        return {};
+      }
+    }
+
+    function saveChecklistState() {
+      try {
+        localStorage.setItem(CHECKLIST_STORAGE_KEY, JSON.stringify(checklistState));
+      } catch (err) {
+        // Ignore storage quota errors gracefully
+      }
+    }
+
+    function applyTheme(theme) {
+      currentTheme = theme === "dark" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", currentTheme);
+      const isDark = currentTheme === "dark";
+      themeIconSun.classList.toggle("hidden", isDark);
+      themeIconMoon.classList.toggle("hidden", !isDark);
+      themeToggleLabel.textContent = isDark ? "Night" : "Day";
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
+      } catch (err) {
+        // Ignore storage errors
+      }
+    }
+
+    function initTheme() {
+      try {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+        if (saved === "dark" || saved === "light") {
+          applyTheme(saved);
+          return;
+        }
+      } catch (err) {
+        // Fallback to light
+      }
+      applyTheme("light");
+    }
+
+    let toastTimer = null;
+    function showToast(message) {
+      toastMessageEl.textContent = message;
+      toastEl.classList.remove("opacity-0");
+      toastEl.classList.add("opacity-100");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toastEl.classList.remove("opacity-100");
+        toastEl.classList.add("opacity-0");
+      }, 2400);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getActiveData() {
+      return LIFECYCLE_KB[currentMode];
+    }
+
+    function getTaskById(id) {
+      return getActiveData().tasks.find((t) => t.id === id) || null;
+    }
+
+    function getChecklistKey(taskId, index) {
+      return `${taskId}::${index}`;
+    }
+
+    function getChecklistProgress(task) {
+      const total = (task.checklist || []).length;
+      let done = 0;
+      for (let i = 0; i < total; i++) {
+        if (checklistState[getChecklistKey(task.id, i)]) done++;
+      }
+      return { done, total };
+    }
+
+    // ============================================================================
+    // Matching & Filter Logic
+    // ============================================================================
+    function taskMatchesGamp(task, cat) {
+      if (currentMode !== "gmp" || !cat || cat === "all") return true;
+      if (!task.gampCategories || !task.gampCategories.length) return true;
+      return task.gampCategories.includes(Number(cat));
+    }
+
+    function taskMatchesNonGmpFilter(task, filter) {
+      if (currentMode !== "nonGmp" || !filter || filter === "all") return true;
+      return task.requirementLevel === "mandatory";
+    }
+
+    function taskMatchesActor(task, actor) {
+      if (!actor) return true;
+      return task.leadActor === actor || (task.supportActors || []).includes(actor);
+    }
+
+    function taskMatchesSearch(task, query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return true;
+      const haystack = [
+        task.title,
+        task.phase,
+        task.mode,
+        task.leadActor,
+        ...(task.supportActors || []),
+        ...(task.keywords || []),
+        ...(task.gxpStandards || []),
+        ...(task.isoStandards || []),
+        task.softGate || "",
+        task.entryGate || "",
+        task.exitGate || "",
+        task.watchout || "",
+        ...(task.checklist || []).map((c) => `${c.text} ${c.example || ""}`)
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    }
+
+    // ============================================================================
+    // Standards Study Card Resolver (Clickable GxP & ISO Badges)
+    // ============================================================================
+    function resolveStandardStudyInfo(tagLabel) {
+      const glossary = LIFECYCLE_KB.standardsGlossary;
+      let matchedKey = null;
+
+      for (const key of Object.keys(glossary)) {
+        if (tagLabel.toLowerCase().startsWith(key.toLowerCase())) {
+          matchedKey = key;
+          break;
+        }
+      }
+
+      if (!matchedKey) {
+        return {
+          tag: tagLabel,
+          category: "Reference Standard",
+          fullTitle: tagLabel,
+          summary: "Compliance reference governing this lifecycle activity.",
+          matchedClauses: []
+        };
+      }
+
+      const entry = glossary[matchedKey];
+      const matchedClauses = [];
+
+      // Parse parenthetical clauses like "(Sec 4.4, 5, 7, 9, 12)" or "(A.8.13, A.8.15)" or "(11.10(d), (g))"
+      const parenMatch = tagLabel.match(/\((.+)\)/);
+      if (parenMatch && entry.clauses && Object.keys(entry.clauses).length > 0) {
+        const inner = parenMatch[1].replace(/\bSec\.?\s*/gi, "");
+        const tokens = inner.split(",").map((s) => s.trim()).filter(Boolean);
+        let lastPrefix = "";
+
+        tokens.forEach((rawToken) => {
+          let code = rawToken;
+          // Expand shorthand like "(g)" following "11.10(d)"
+          if (/^\([a-z]\)$/i.test(code) && lastPrefix) {
+            code = `${lastPrefix}${code}`;
+          }
+          const prefixMatch = code.match(/^(\d+\.\d+)/);
+          if (prefixMatch) lastPrefix = prefixMatch[1];
+
+          if (entry.clauses[code]) {
+            matchedClauses.push({ code, desc: entry.clauses[code] });
+          } else {
+            // Try base integer/section fallback (e.g., 7.2 -> 7)
+            const base = code.split(".")[0];
+            if (entry.clauses[base] && !matchedClauses.some((c) => c.code === base)) {
+              matchedClauses.push({ code, desc: entry.clauses[base] });
+            }
+          }
+        });
+      }
+
+      return {
+        tag: tagLabel,
+        category: entry.category,
+        fullTitle: entry.fullTitle,
+        summary: entry.summary,
+        matchedClauses
+      };
+    }
+
+    function renderStudyCardHtml(tagLabel) {
+      if (!tagLabel) return "";
+      const info = resolveStandardStudyInfo(tagLabel);
+      const clausesHtml = info.matchedClauses.length
+        ? `
+          <div class="mt-2.5 pt-2.5 border-t border-blue-200/70 space-y-1.5">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-blue-700">Referenced Clauses Breakdown</div>
+            ${info.matchedClauses
+              .map(
+                (c) => `
+                <div class="text-[11px] leading-relaxed text-slate-700 flex items-start gap-2">
+                  <span class="px-1.5 py-0.5 rounded bg-blue-100/80 text-blue-800 font-bold text-[10px] shrink-0 mt-0.5">${escapeHtml(c.code)}</span>
+                  <span>${escapeHtml(c.desc)}</span>
+                </div>
+              `
+              )
+              .join("")}
+          </div>
+        `
+        : "";
+
+      return `
+        <div class="study-card mt-3 p-3.5 rounded-xl bg-blue-50/70 border border-blue-200 shadow-sm">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">${escapeHtml(info.category)}</span>
+              <h4 class="text-xs font-bold text-slate-900 mt-0.5">${escapeHtml(info.fullTitle)}</h4>
+            </div>
+            <button
+              type="button"
+              data-close-study-card="true"
+              class="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-blue-100/60 transition cursor-pointer shrink-0"
+              title="Close Study Card"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-600 leading-relaxed mt-1.5">${escapeHtml(info.summary)}</p>
+          ${clausesHtml}
+        </div>
+      `;
+    }
+
+    // ============================================================================
+    // Timeline Rendering
+    // ============================================================================
+    function renderTimeline() {
+      const data = getActiveData();
+      const isGmp = currentMode === "gmp";
+
+      if (gampFilterBar) gampFilterBar.classList.toggle("hidden", !isGmp);
+      if (nonGmpFilterBar) nonGmpFilterBar.classList.toggle("hidden", isGmp);
+
+      // Update Mode Switcher Styling
+      modeGmpBtn.className = isGmp
+        ? "px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition bg-white text-blue-700 shadow-sm"
+        : "px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900";
+      modeNonGmpBtn.className = !isGmp
+        ? "px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition bg-white text-blue-700 shadow-sm"
+        : "px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition text-slate-600 hover:text-slate-900";
+
+      timelineMinWidthWrapper.className = isGmp ? "min-w-[1720px]" : "min-w-[1320px]";
+      phaseHeadersGrid.className = isGmp ? "grid-gmp" : "grid-nongmp";
+
+      // Render Phase Headers
+      phaseHeadersGrid.innerHTML = data.phases
+        .map(
+          (p) => `
+          <div style="grid-column: span ${p.span};" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider ${p.color}">${escapeHtml(p.title)}</span>
+            <span class="text-xs font-medium text-slate-600 truncate">${escapeHtml(p.subtitle)}</span>
+          </div>
+        `
+        )
+        .join("");
+
+      // Render Swimlanes & Cards
+      swimlanesContainer.innerHTML = data.swimlanes
+        .map((lane) => {
+          const laneTasks = data.tasks.filter((t) => t.swimlane === lane.id);
+
+          const cardsHtml = laneTasks
+            .map((task) => {
+              const isParallel = task.mode === "Parallel Track";
+              const isNonGmpMandatory = !isGmp && task.requirementLevel === "mandatory";
+              const isNonGmpOptional = !isGmp && task.requirementLevel === "optional";
+              const isDashedCard = isParallel || isNonGmpOptional;
+              const progress = getChecklistProgress(task);
+              const pct = progress.total ? Math.round((progress.done / progress.total) * 100) : 0;
+              const leadStyle = ACTOR_STYLES[task.leadActor]?.lead || "bg-slate-700 text-white";
+              const isNotReqForGamp = isGmp && selectedGampCat !== "all" && !taskMatchesGamp(task, selectedGampCat);
+
+              const supportBadges = (task.supportActors || [])
+                .map((a) => {
+                  const s = ACTOR_STYLES[a]?.support || "bg-slate-100 text-slate-600 border-slate-200";
+                  return `<span class="px-1.5 py-0.5 text-[10px] font-medium rounded border ${s}">${escapeHtml(a)}</span>`;
+                })
+                .join("");
+
+              const gampBadge =
+                isGmp && task.gampCategories
+                  ? `<span class="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-slate-100 text-slate-600 border border-slate-200" title="Required for GAMP 5 Categories: ${task.gampCategories.join(", ")}">(${task.gampCategories.join(",")})</span>`
+                  : "";
+
+              const nonGmpBadge = isNonGmpMandatory
+                ? `<span class="px-1.5 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-700 border border-emerald-200" title="Mandatory across all sites">Mandatory</span>`
+                : isNonGmpOptional
+                  ? `<span class="px-1.5 py-0.5 text-[9px] font-medium rounded bg-slate-100 text-slate-500 border border-slate-200" title="Requirement varies by site policy">Site-Optional</span>`
+                  : "";
+
+              const footerModeText = isGmp
+                ? isNotReqForGamp
+                  ? `Skip (Cat ${selectedGampCat})`
+                  : isParallel
+                    ? "Parallel / Fast-Track"
+                    : "Sequential Gate"
+                : isNonGmpMandatory
+                  ? "Mandatory (All Sites)"
+                  : "Site-Optional";
+
+              return `
+                <button
+                  type="button"
+                  data-task-id="${task.id}"
+                  style="grid-column: ${task.colStart} / span ${task.colSpan};"
+                  class="task-card text-left p-3 rounded-xl bg-white border ${
+                    isDashedCard ? "border-dashed border-slate-300 bg-slate-50/70" : "border-slate-200"
+                  } hover:border-blue-400 hover:shadow-sm flex flex-col justify-between gap-2 min-h-[108px] cursor-pointer relative group"
+                >
+                  <div class="space-y-1.5">
+                    <div class="flex items-start justify-between gap-1.5">
+                      <span class="text-xs font-bold text-slate-800 leading-snug group-hover:text-blue-700 transition">${escapeHtml(task.title)}</span>
+                      <div class="flex items-center gap-1 shrink-0">
+                        ${gampBadge}
+                        ${nonGmpBadge}
+                        ${
+                          task.hasOptionalModules
+                            ? `<span class="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-violet-100 text-violet-700" title="Includes Optional Focused Add-Ons">+Add-Ons</span>`
+                            : ""
+                        }
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1">
+                      <span class="px-1.5 py-0.5 text-[10px] font-bold rounded border ${leadStyle}" title="Accountable / Lead Actor">${escapeHtml(task.leadActor)}</span>
+                      ${supportBadges}
+                    </div>
+                  </div>
+                  <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2 text-[10px] text-slate-400">
+                    <span class="truncate">${escapeHtml(footerModeText)}</span>
+                    <span class="font-semibold ${pct === 100 ? "text-emerald-600" : "text-slate-500"} shrink-0">${progress.done}/${progress.total}</span>
+                  </div>
+                </button>
+              `;
+            })
+            .join("");
+
+          return `
+            <div class="flex hover:bg-slate-50/40 transition">
+              <div class="w-52 shrink-0 sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-4 flex items-center gap-2.5">
+                <span class="w-1.5 h-10 rounded-full ${lane.accent} shrink-0"></span>
+                <div class="min-w-0">
+                  <div class="text-xs font-bold text-slate-800 truncate">${escapeHtml(lane.title)}</div>
+                  <div class="text-[11px] text-slate-400 truncate mt-0.5">${escapeHtml(lane.subtitle)}</div>
+                </div>
+              </div>
+              <div class="flex-1 px-4 py-3.5">
+                <div class="${isGmp ? "grid-gmp" : "grid-nongmp"}">
+                  ${cardsHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      // Attach Card Event Listeners
+      swimlanesContainer.querySelectorAll(".task-card").forEach((card) => {
+        const id = card.dataset.taskId;
+        card.addEventListener("mouseenter", () => {
+          hoveredTaskId = id;
+          updateHighlightStates();
+        });
+        card.addEventListener("mouseleave", () => {
+          hoveredTaskId = null;
+          updateHighlightStates();
+        });
+        card.addEventListener("click", () => {
+          openInspector(id);
+        });
+      });
+
+      updateHighlightStates();
+    }
+
+    // ============================================================================
+    // Dependency & Filter Highlighting
+    // ============================================================================
+    function updateHighlightStates() {
+      const data = getActiveData();
+      const cards = swimlanesContainer.querySelectorAll(".task-card");
+      const activeFocusId = selectedTaskId || hoveredTaskId;
+      const focusTask = activeFocusId ? getTaskById(activeFocusId) : null;
+      const hasSearch = searchQuery.trim().length > 0;
+      const hasActor = Boolean(selectedActor);
+      const hasGamp = currentMode === "gmp" && selectedGampCat !== "all";
+      const hasNonGmpFilter = currentMode === "nonGmp" && selectedNonGmpFilter === "mandatory";
+
+      // Update GAMP Category Buttons
+      document.querySelectorAll(".gamp-cat-btn").forEach((btn) => {
+        const isActive = btn.dataset.gampCat === selectedGampCat;
+        btn.className = isActive
+          ? "gamp-cat-btn px-2.5 py-1 text-xs font-semibold rounded-lg border transition bg-blue-600 text-white border-blue-600"
+          : "gamp-cat-btn px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 transition";
+      });
+
+      // Update Non-GMP Scope Filter Buttons
+      document.querySelectorAll(".nongmp-filter-btn").forEach((btn) => {
+        const isActive = btn.dataset.nongmpFilter === selectedNonGmpFilter;
+        btn.className = isActive
+          ? "nongmp-filter-btn px-2.5 py-1 text-xs font-semibold rounded-lg border transition bg-blue-600 text-white border-blue-600"
+          : "nongmp-filter-btn px-2.5 py-1 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:text-blue-600 transition";
+      });
+
+      // Update Quick Chip Active States
+      document.querySelectorAll(".quick-chip").forEach((chip) => {
+        const isActive = searchQuery.trim().toLowerCase() === chip.dataset.quickChip;
+        chip.className = isActive
+          ? "quick-chip px-2.5 py-1 text-xs font-semibold rounded-lg bg-blue-600 border border-blue-600 text-white transition"
+          : "quick-chip px-2.5 py-1 text-xs font-medium rounded-lg bg-white border border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 transition";
+      });
+
+      // Update Actor Legend Cards
+      document.querySelectorAll(".actor-card").forEach((card) => {
+        const actor = card.dataset.actorFilter;
+        const base = "actor-card text-left p-3 rounded-xl bg-white border border-slate-200 hover:shadow-sm transition flex items-start gap-3 cursor-pointer";
+        if (selectedActor === actor) {
+          card.className = `${base} ${ACTOR_STYLES[actor]?.cardActive || ""}`;
+        } else {
+          card.className = base;
+        }
+      });
+      resetActorBtn.classList.toggle("hidden", !selectedActor);
+
+      // Apply Visual Highlighting to Timeline Cards
+      let matchCount = 0;
+
+      cards.forEach((card) => {
+        const id = card.dataset.taskId;
+        const task = getTaskById(id);
+        card.classList.remove("is-dimmed", "is-selected", "is-predecessor", "is-successor", "is-highlight");
+        if (!task) return;
+
+        // Dependency Focus takes priority when hovering or inspecting a card
+        if (focusTask) {
+          if (id === focusTask.id) {
+            card.classList.add("is-selected");
+          } else if ((focusTask.predecessors || []).includes(id)) {
+            card.classList.add("is-predecessor");
+          } else if ((focusTask.successors || []).includes(id)) {
+            card.classList.add("is-successor");
+          } else {
+            card.classList.add("is-dimmed");
+          }
+          return;
+        }
+
+        // Otherwise apply active filters (GAMP, Non-GMP Scope, Actor, Search)
+        if (hasSearch || hasActor || hasGamp || hasNonGmpFilter) {
+          const matchesSearch = !hasSearch || taskMatchesSearch(task, searchQuery);
+          const matchesActor = !hasActor || taskMatchesActor(task, selectedActor);
+          const matchesGamp = !hasGamp || taskMatchesGamp(task, selectedGampCat);
+          const matchesNonGmp = !hasNonGmpFilter || taskMatchesNonGmpFilter(task, selectedNonGmpFilter);
+          if (matchesSearch && matchesActor && matchesGamp && matchesNonGmp) {
+            if (hasSearch || hasActor || hasNonGmpFilter) card.classList.add("is-highlight");
+            matchCount++;
+          } else {
+            card.classList.add("is-dimmed");
+          }
+        }
+      });
+
+      // Update Active Filter Banner
+      if (hasSearch || hasActor || hasGamp || hasNonGmpFilter) {
+        const parts = [];
+        if (hasGamp) parts.push(`GAMP Cat ${selectedGampCat}`);
+        if (hasNonGmpFilter) parts.push("Mandatory Only (URS, IRA, UAT)");
+        if (hasActor) parts.push(`Actor: "${selectedActor}"`);
+        if (hasSearch) parts.push(`Search: "${searchQuery.trim()}"`);
+        const totalTasks = data.tasks.length;
+        if (hasGamp && !hasSearch && !hasActor) {
+          const catDesc = LIFECYCLE_KB.metadata.gampCategories[selectedGampCat] || "";
+          filterBannerText.textContent = `GAMP Cat ${selectedGampCat} (${catDesc}) — ${matchCount} of ${totalTasks} deliverables required (${totalTasks - matchCount} dimmed/skipped).`;
+        } else if (hasNonGmpFilter && !hasSearch && !hasActor) {
+          filterBannerText.textContent = `Non-GMP Mandatory Core (All Sites): ${matchCount} mandatory deliverables highlighted (URS, IRA, UAT) — remaining ${totalTasks - matchCount} steps are site-optional.`;
+        } else {
+          filterBannerText.textContent = `Showing ${matchCount} matching task${matchCount === 1 ? "" : "s"} for ${parts.join(" + ")}`;
+        }
+        filterBanner.classList.remove("hidden");
+      } else {
+        filterBanner.classList.add("hidden");
+      }
+    }
+
+    // ============================================================================
+    // Slide-Over Compliance Inspector Drawer
+    // ============================================================================
+    function updateProtocolTabButtons() {
+      document.querySelectorAll(".protocol-tab-btn").forEach((btn) => {
+        const isActive = btn.dataset.protocolTab === activeProtocolTab;
+        btn.className = isActive
+          ? "protocol-tab-btn flex-1 py-1.5 px-3 text-xs font-semibold rounded-lg transition bg-white text-slate-900 shadow-sm"
+          : "protocol-tab-btn flex-1 py-1.5 px-3 text-xs font-semibold rounded-lg transition text-slate-600 hover:text-slate-900";
+      });
+    }
+
+    function openInspector(taskId) {
+      const task = getTaskById(taskId);
+      if (!task) return;
+
+      selectedTaskId = taskId;
+      activeProtocolTab = "core";
+      activeStandardTag = null;
+
+      drawerPhaseBadge.textContent = task.phase;
+      drawerModeBadge.textContent =
+        currentMode === "gmp" && task.gampCategories
+          ? `${task.mode} • GAMP (${task.gampCategories.join(",")})`
+          : task.mode;
+      drawerTitle.textContent = task.title;
+
+      // Render Lead & Support Actors
+      const leadStyle = ACTOR_STYLES[task.leadActor]?.lead || "bg-slate-700 text-white";
+      const supportHtml = (task.supportActors || [])
+        .map((a) => {
+          const s = ACTOR_STYLES[a]?.support || "bg-slate-100 text-slate-600 border-slate-200";
+          return `<span class="px-2 py-0.5 text-[11px] font-medium rounded-md border ${s}">Support: ${escapeHtml(a)}</span>`;
+        })
+        .join("");
+
+      drawerActorsRow.innerHTML = `
+        <span class="px-2 py-0.5 text-[11px] font-bold rounded-md border ${leadStyle}">Owner / Lead: ${escapeHtml(task.leadActor)}</span>
+        ${supportHtml}
+        ${
+          task.tracksAppVersion
+            ? `<span class="px-2 py-0.5 text-[11px] font-semibold rounded-md bg-violet-50 text-violet-700 border border-violet-200" title="Application build version must be documented here">Tracks App Version (v1.0.0)</span>`
+            : ""
+        }
+      `;
+
+      // Show or hide OQ/PQ Optional Modules tabs
+      oqPqTabs.classList.toggle("hidden", !task.hasOptionalModules);
+      updateProtocolTabButtons();
+
+      renderDrawerBody();
+
+      // Open drawer & backdrop
+      drawerBackdrop.classList.remove("hidden");
+      requestAnimationFrame(() => {
+        drawerBackdrop.classList.remove("opacity-0");
+        inspectorDrawer.classList.remove("translate-x-full");
+        inspectorDrawer.setAttribute("aria-hidden", "false");
+      });
+
+      updateHighlightStates();
+    }
+
+    function closeInspector() {
+      selectedTaskId = null;
+      activeStandardTag = null;
+      inspectorDrawer.classList.add("translate-x-full");
+      inspectorDrawer.setAttribute("aria-hidden", "true");
+      drawerBackdrop.classList.add("opacity-0");
+      setTimeout(() => {
+        if (!selectedTaskId) drawerBackdrop.classList.add("hidden");
+      }, 240);
+      updateHighlightStates();
+    }
+
+    function renderDrawerBody() {
+      const task = getTaskById(selectedTaskId);
+      if (!task) return;
+
+      if (task.hasOptionalModules && activeProtocolTab === "addons") {
+        renderAddOnsTab();
+        return;
+      }
+
+      const progress = getChecklistProgress(task);
+      const pct = progress.total ? Math.round((progress.done / progress.total) * 100) : 0;
+      const allExpanded =
+        (task.checklist || []).length > 0 &&
+        task.checklist.every((_, idx) => Boolean(expandedExamples[getChecklistKey(task.id, idx)]));
+
+      // Gates Section (Soft Gate + Hard Gate for GMP, Entry + Exit for Non-GMP)
+      const softGateHtml = task.softGate
+        ? `
+          <div class="p-3 rounded-xl bg-blue-50/70 border border-blue-200">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              Soft Gate — Can Start Drafting (Fast-Track)
+            </div>
+            <p class="text-xs text-slate-700 mt-1 leading-relaxed">${escapeHtml(task.softGate)}</p>
+          </div>
+        `
+        : "";
+
+      const gatesHtml = `
+        <div class="space-y-2.5">
+          ${softGateHtml}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                ${task.softGate ? "Hard Gate (Approval / Execution)" : "Entry Gate"}
+              </div>
+              <p class="text-xs text-slate-700 mt-1 leading-relaxed">${escapeHtml(task.entryGate)}</p>
+            </div>
+            <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Exit Gate (Deliverable Done)
+              </div>
+              <p class="text-xs text-slate-700 mt-1 leading-relaxed">${escapeHtml(task.exitGate)}</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // QA Watchout Callout
+      const watchoutHtml = task.watchout
+        ? `
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            <div class="flex-1">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">QA &amp; Audit Watchout</div>
+              <p class="text-xs text-slate-700 mt-0.5 leading-relaxed">${escapeHtml(task.watchout)}</p>
+              ${
+                task.hasBackupGuideLink
+                  ? `<button type="button" data-open-backup-guide="true" class="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 hover:text-emerald-900 underline cursor-pointer">Open Zero-Redundancy Backup &amp; Restore Guide &rarr;</button>`
+                  : ""
+              }
+            </div>
+          </div>
+        `
+        : "";
+
+      // App Version Tracking Callout (when applicable)
+      const versionNoteHtml = task.versionNote
+        ? `
+          <div class="p-3 rounded-xl bg-violet-50/70 border border-violet-200 flex items-start gap-2.5">
+            <svg class="w-4 h-4 text-violet-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <div>
+              <div class="text-[10px] font-bold uppercase tracking-wider text-violet-700">Application Version Tracking</div>
+              <p class="text-xs text-slate-700 mt-0.5 leading-relaxed">${escapeHtml(task.versionNote)}</p>
+            </div>
+          </div>
+        `
+        : "";
+
+      // Mandatory Sections Checklist with Inline Examples
+      const checklistItemsHtml = (task.checklist || [])
+        .map((item, idx) => {
+          const key = getChecklistKey(task.id, idx);
+          const isChecked = Boolean(checklistState[key]);
+          const isExampleOpen = Boolean(expandedExamples[key]);
+          const itemText = typeof item === "string" ? item : item.text;
+          const itemExample = typeof item === "object" ? item.example : "";
+
+          return `
+            <div class="rounded-xl border border-slate-200 bg-white overflow-hidden transition hover:border-slate-300">
+              <div class="p-3 flex items-start justify-between gap-2.5">
+                <label class="flex items-start gap-2.5 cursor-pointer flex-1 select-none">
+                  <input
+                    type="checkbox"
+                    data-check-key="${key}"
+                    ${isChecked ? "checked" : ""}
+                    class="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0"
+                  />
+                  <span class="text-xs leading-relaxed ${isChecked ? "line-through text-slate-400" : "text-slate-700 font-medium"}">${escapeHtml(itemText)}</span>
+                </label>
+                ${
+                  itemExample
+                    ? `
+                      <button
+                        type="button"
+                        data-toggle-example="${key}"
+                        class="px-2 py-0.5 text-[10px] font-semibold rounded-md border transition shrink-0 cursor-pointer ${
+                          isExampleOpen
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-slate-50 text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600"
+                        }"
+                      >
+                        ${isExampleOpen ? "Hide" : "Example"}
+                      </button>
+                    `
+                    : ""
+                }
+              </div>
+              ${
+                itemExample && isExampleOpen
+                  ? `
+                    <div class="example-box px-3.5 py-2.5 bg-slate-50/90 border-t border-slate-100 text-[11px] text-slate-600 leading-relaxed">
+                      <span class="font-semibold text-blue-700">Example:</span> ${escapeHtml(itemExample)}
+                    </div>
+                  `
+                  : ""
+              }
+            </div>
+          `;
+        })
+        .join("");
+
+      const checklistHtml = `
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Mandatory Sections Checklist</span>
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                id="toggle-all-examples-btn"
+                class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 underline cursor-pointer"
+              >
+                ${allExpanded ? "Hide all examples" : "Show all examples"}
+              </button>
+              <span class="text-xs font-bold text-slate-700">${progress.done}/${progress.total} (${pct}%)</span>
+            </div>
+          </div>
+          <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-600 transition-all duration-300 rounded-full" style="width: ${pct}%;"></div>
+          </div>
+          <div class="space-y-2 pt-1">
+            ${checklistItemsHtml}
+          </div>
+        </div>
+      `;
+
+      // Clickable Standards Tags (Primary GxP & Supporting ISO)
+      const gxpBadgesHtml = (task.gxpStandards || [])
+        .map((std) => {
+          const isSelected = activeStandardTag === std;
+          return `
+            <button
+              type="button"
+              data-standard-tag="${escapeHtml(std)}"
+              class="px-2.5 py-1 text-xs font-semibold rounded-lg border transition cursor-pointer inline-flex items-center gap-1 ${
+                isSelected
+                  ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                  : "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+              }"
+              title="Click to study ${escapeHtml(std)}"
+            >
+              <span>${escapeHtml(std)}</span>
+              <svg class="w-3 h-3 opacity-70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+              </svg>
+            </button>
+          `;
+        })
+        .join("");
+
+      const isoBadgesHtml = (task.isoStandards || [])
+        .map((std) => {
+          const isSelected = activeStandardTag === std;
+          return `
+            <button
+              type="button"
+              data-standard-tag="${escapeHtml(std)}"
+              class="px-2.5 py-1 text-xs font-medium rounded-lg border transition cursor-pointer inline-flex items-center gap-1 ${
+                isSelected
+                  ? "bg-slate-800 text-white border-slate-800 shadow-sm"
+                  : "bg-slate-50 text-slate-700 border-slate-200 hover:border-blue-400 hover:text-blue-600"
+              }"
+              title="Click to study ${escapeHtml(std)}"
+            >
+              <span>${escapeHtml(std)}</span>
+              <svg class="w-3 h-3 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+              </svg>
+            </button>
+          `;
+        })
+        .join("");
+
+      const standardsHtml = `
+        <div class="pt-2 border-t border-slate-200 space-y-3">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Primary GxP / Lifecycle Standard</span>
+              <span class="text-[10px] text-slate-400">Click any tag to study clauses</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">${gxpBadgesHtml}</div>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Supporting ISO Standards</div>
+            <div class="flex flex-wrap gap-1.5">${isoBadgesHtml}</div>
+          </div>
+          ${renderStudyCardHtml(activeStandardTag)}
+        </div>
+      `;
+
+      // Interactive Upstream / Downstream Navigation Chips
+      const predChips = (task.predecessors || [])
+        .map((pid) => getTaskById(pid))
+        .filter(Boolean)
+        .map(
+          (pt) => `
+          <button type="button" data-jump-task="${pt.id}" class="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition cursor-pointer">
+            &larr; ${escapeHtml(pt.title)}
+          </button>
+        `
+        )
+        .join("");
+
+      const succChips = (task.successors || [])
+        .map((sid) => getTaskById(sid))
+        .filter(Boolean)
+        .map(
+          (st) => `
+          <button type="button" data-jump-task="${st.id}" class="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition cursor-pointer">
+            ${escapeHtml(st.title)} &rarr;
+          </button>
+        `
+        )
+        .join("");
+
+      const depsHtml =
+        predChips || succChips
+          ? `
+            <div class="pt-3 border-t border-slate-200 space-y-2.5">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Linked Dependencies</div>
+              ${predChips ? `<div class="flex flex-wrap gap-1.5">${predChips}</div>` : ""}
+              ${succChips ? `<div class="flex flex-wrap gap-1.5">${succChips}</div>` : ""}
+            </div>
+          `
+          : "";
+
+      drawerBody.innerHTML = `${gatesHtml}${versionNoteHtml}${watchoutHtml}${checklistHtml}${standardsHtml}${depsHtml}`;
+      bindDrawerInteractions();
+    }
+
+    function renderAddOnsTab() {
+      const addonsHtml = OPTIONAL_PROTOCOL_ADDONS.map((addon) => {
+        const isOpen = Boolean(expandedAddOns[addon.id]);
+        const itemsHtml = addon.checklist
+          .map(
+            (item) => `
+            <div class="p-2.5 rounded-lg bg-slate-50/90 border border-slate-200 space-y-1">
+              <div class="text-xs font-semibold text-slate-800">${escapeHtml(item.text)}</div>
+              <div class="text-[11px] text-slate-600 leading-relaxed"><span class="font-semibold text-blue-700">Example:</span> ${escapeHtml(item.example)}</div>
+            </div>
+          `
+          )
+          .join("");
+
+        const tagsHtml = [...addon.gxpStandards, ...addon.isoStandards]
+          .map((std) => {
+            const isSelected = activeStandardTag === std;
+            return `
+              <button
+                type="button"
+                data-standard-tag="${escapeHtml(std)}"
+                class="px-2 py-0.5 text-[11px] font-semibold rounded-md border transition cursor-pointer ${
+                  isSelected
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                }"
+              >
+                ${escapeHtml(std)}
+              </button>
+            `;
+          })
+          .join("");
+
+        return `
+          <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+            <button
+              type="button"
+              data-toggle-addon="${addon.id}"
+              class="w-full p-3.5 text-left flex items-center justify-between gap-3 hover:bg-slate-50 transition cursor-pointer"
+            >
+              <div class="space-y-1">
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-violet-100 text-violet-700">${escapeHtml(addon.badge)}</span>
+                <div class="text-xs font-bold text-slate-900">${escapeHtml(addon.title)}</div>
+              </div>
+              <svg class="w-4 h-4 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            ${
+              isOpen
+                ? `
+                  <div class="px-3.5 pb-3.5 pt-1 border-t border-slate-100 space-y-3">
+                    <p class="text-[11px] text-slate-600 leading-relaxed"><span class="font-semibold text-slate-800">When to include:</span> ${escapeHtml(addon.whenToUse)}</p>
+                    <div class="space-y-2">${itemsHtml}</div>
+                    <div class="flex flex-wrap gap-1.5 pt-1">${tagsHtml}</div>
+                  </div>
+                `
+                : ""
+            }
+          </div>
+        `;
+      }).join("");
+
+      drawerBody.innerHTML = `
+        <div class="p-3 rounded-xl bg-violet-50/70 border border-violet-200 text-xs text-violet-900 leading-relaxed">
+          These focused sub-protocols are <strong>optional</strong>. Include or separate them from Core OQ/PQ only when your project involves App-to-App middleware, legacy data cutover, or 21 CFR Part 11 electronic signatures.
+        </div>
+        <div class="space-y-3">${addonsHtml}</div>
+        ${renderStudyCardHtml(activeStandardTag)}
+      `;
+
+      bindDrawerInteractions();
+    }
+
+    function bindDrawerInteractions() {
+      // Checklist Checkboxes
+      drawerBody.querySelectorAll("input[data-check-key]").forEach((cb) => {
+        cb.addEventListener("change", () => {
+          checklistState[cb.dataset.checkKey] = cb.checked;
+          saveChecklistState();
+          renderTimeline();
+          renderDrawerBody();
+        });
+      });
+
+      // Individual Example Toggles
+      drawerBody.querySelectorAll("[data-toggle-example]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.toggleExample;
+          expandedExamples[key] = !expandedExamples[key];
+          renderDrawerBody();
+        });
+      });
+
+      // Toggle All Examples Button
+      const toggleAllBtn = document.getElementById("toggle-all-examples-btn");
+      if (toggleAllBtn) {
+        toggleAllBtn.addEventListener("click", () => {
+          const task = getTaskById(selectedTaskId);
+          if (!task) return;
+          const allOpen = task.checklist.every((_, idx) => Boolean(expandedExamples[getChecklistKey(task.id, idx)]));
+          task.checklist.forEach((_, idx) => {
+            expandedExamples[getChecklistKey(task.id, idx)] = !allOpen;
+          });
+          renderDrawerBody();
+        });
+      }
+
+      // Clickable Standard Study Tags
+      drawerBody.querySelectorAll("[data-standard-tag]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tag = btn.dataset.standardTag;
+          activeStandardTag = activeStandardTag === tag ? null : tag;
+          renderDrawerBody();
+        });
+      });
+
+      // Close Study Card Button
+      const closeStudyBtn = drawerBody.querySelector("[data-close-study-card]");
+      if (closeStudyBtn) {
+        closeStudyBtn.addEventListener("click", () => {
+          activeStandardTag = null;
+          renderDrawerBody();
+        });
+      }
+
+      // Dependency Jump Chips
+      drawerBody.querySelectorAll("[data-jump-task]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          openInspector(btn.dataset.jumpTask);
+        });
+      });
+
+      // Add-On Accordions
+      drawerBody.querySelectorAll("[data-toggle-addon]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.toggleAddon;
+          expandedAddOns[id] = !expandedAddOns[id];
+          renderDrawerBody();
+        });
+      });
+
+      // Open Backup & Restore Guide from inside Drawer
+      drawerBody.querySelectorAll("[data-open-backup-guide]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          openBackupModal();
+        });
+      });
+    }
+
+    // ============================================================================
+    // Event Listeners
+    // ============================================================================
+    modeGmpBtn.addEventListener("click", () => {
+      if (currentMode === "gmp") return;
+      currentMode = "gmp";
+      closeInspector();
+      renderTimeline();
+    });
+
+    modeNonGmpBtn.addEventListener("click", () => {
+      if (currentMode === "nonGmp") return;
+      currentMode = "nonGmp";
+      closeInspector();
+      renderTimeline();
+    });
+
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      clearSearchBtn.classList.toggle("hidden", !searchQuery);
+      if (selectedTaskId) closeInspector();
+      updateHighlightStates();
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchQuery = "";
+      searchInput.value = "";
+      clearSearchBtn.classList.add("hidden");
+      updateHighlightStates();
+    });
+
+    themeToggleBtn.addEventListener("click", () => {
+      applyTheme(currentTheme === "dark" ? "light" : "dark");
+    });
+
+    // Export LIFECYCLE_KB JSON
+    exportJsonBtn.addEventListener("click", () => {
+      try {
+        const blob = new Blob([JSON.stringify(LIFECYCLE_KB, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "lifecycle-knowledge-base.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("Exported lifecycle-knowledge-base.json");
+      } catch (err) {
+        showToast("Export failed in this browser environment.");
+      }
+    });
+
+    // Actor Legend Filter Cards
+    document.querySelectorAll(".actor-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const actor = card.dataset.actorFilter;
+        selectedActor = selectedActor === actor ? null : actor;
+        if (selectedTaskId) closeInspector();
+        updateHighlightStates();
+      });
+    });
+
+    resetActorBtn.addEventListener("click", () => {
+      selectedActor = null;
+      updateHighlightStates();
+    });
+
+    function clearAllFilters() {
+      searchQuery = "";
+      searchInput.value = "";
+      clearSearchBtn.classList.add("hidden");
+      selectedActor = null;
+      selectedGampCat = "all";
+      selectedNonGmpFilter = "all";
+      renderTimeline();
+    }
+
+    clearAllFiltersBtn.addEventListener("click", clearAllFilters);
+
+    // Quick Compliance Filter Chips
+    document.querySelectorAll(".quick-chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const val = chip.dataset.quickChip;
+        searchQuery = searchQuery.toLowerCase() === val ? "" : val;
+        searchInput.value = searchQuery;
+        clearSearchBtn.classList.toggle("hidden", !searchQuery);
+        if (selectedTaskId) closeInspector();
+        updateHighlightStates();
+      });
+    });
+
+    // GAMP 5 Category Filter Buttons
+    document.querySelectorAll(".gamp-cat-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedGampCat = btn.dataset.gampCat;
+        if (selectedTaskId) closeInspector();
+        renderTimeline();
+      });
+    });
+
+    // Non-GMP Scope Filter Buttons
+    document.querySelectorAll(".nongmp-filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedNonGmpFilter = btn.dataset.nongmpFilter;
+        if (selectedTaskId) closeInspector();
+        renderTimeline();
+      });
+    });
+
+    // GAMP 5 Explainer Modal Helpers
+    function openGampModal() {
+      gampModal.classList.remove("hidden");
+      gampModal.classList.add("flex");
+    }
+
+    function closeGampModal() {
+      gampModal.classList.add("hidden");
+      gampModal.classList.remove("flex");
+    }
+
+    gampInfoBtn.addEventListener("click", openGampModal);
+    closeGampModalBtn.addEventListener("click", closeGampModal);
+    gampModalOkBtn.addEventListener("click", closeGampModal);
+    gampModalBackdrop.addEventListener("click", closeGampModal);
+
+    // Backup & Restore Guideline Modal Helpers
+    function openBackupModal() {
+      backupModal.classList.remove("hidden");
+      backupModal.classList.add("flex");
+    }
+
+    function closeBackupModal() {
+      backupModal.classList.add("hidden");
+      backupModal.classList.remove("flex");
+    }
+
+    backupGuideBtn.addEventListener("click", openBackupModal);
+    closeBackupModalBtn.addEventListener("click", closeBackupModal);
+    backupModalOkBtn.addEventListener("click", closeBackupModal);
+    backupModalBackdrop.addEventListener("click", closeBackupModal);
+
+    // Protocol Tabs inside Inspector
+    document.querySelectorAll(".protocol-tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeProtocolTab = btn.dataset.protocolTab;
+        activeStandardTag = null;
+        updateProtocolTabButtons();
+        renderDrawerBody();
+      });
+    });
+
+    // Drawer Close & Keyboard Shortcuts
+    closeDrawerBtn.addEventListener("click", closeInspector);
+    drawerBackdrop.addEventListener("click", closeInspector);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (!backupModal.classList.contains("hidden")) {
+          closeBackupModal();
+        } else if (!gampModal.classList.contains("hidden")) {
+          closeGampModal();
+        } else if (selectedTaskId) {
+          closeInspector();
+        }
+      }
+    });
+
+    // ============================================================================
+    // Initial Render
+    // ============================================================================
+    initTheme();
+    renderTimeline();
+  </script>
+</body>
+</html>
